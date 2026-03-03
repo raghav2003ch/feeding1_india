@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Feeding India | SD Public School Portal</title>
+    <title>Feeding India | SD Public School</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -16,25 +16,26 @@
         .day-sch { background: #F4C430 !important; color: black !important; }
         .day-emg { background: var(--z-red) !important; color: white !important; }
         
-        .day-circle { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.95rem; position: relative; transition: 0.2s; }
+        .day-circle { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.9rem; position: relative; }
         .has-name::after { content: ''; position: absolute; bottom: 5px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; opacity: 0.6; }
 
         /* Zomato Style Buttons */
         .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 56px; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; }
         .z-btn-main:active { transform: scale(0.97); }
         .z-btn-green { background: var(--z-green); color: white; font-weight: 700; border-radius: 16px; height: 60px; font-size: 1.1rem; box-shadow: 0 8px 16px rgba(39, 180, 110, 0.2); }
+        .z-btn-outline { border: 1.5px solid #E8E8E8; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px; text-align: center; }
 
         /* Pattern Selector */
         .pat-btn { border: 1.5px solid #F0F0F0; padding: 10px 18px; border-radius: 100px; font-weight: 700; font-size: 13px; background: white; transition: 0.2s; }
-        .pat-btn:active { border-color: var(--z-red); color: var(--z-red); }
+        .pat-btn.active { border-color: var(--z-red); color: var(--z-red); background: #FFF5F6; }
 
-        /* Scanner */
+        /* Scanner Styling */
         .scanner-box { background: var(--z-dark); border-radius: 40px; position: relative; overflow: hidden; }
         .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--z-green); box-shadow: 0 0 15px var(--z-green); animation: scan 3s infinite ease-in-out; }
         @keyframes scan { 0%, 100% { top: 0; } 50% { top: 100%; } }
 
-        /* Vacation Range Pill (Big View) */
-        .range-pill { border: 1.5px solid #F0F0F0; padding: 16px; border-radius: 18px; font-weight: 800; font-size: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; background: white; }
+        /* Range Pill */
+        .range-pill { border: 1.5px solid #F0F0F0; padding: 16px; border-radius: 20px; font-weight: 800; font-size: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; background: white; }
         .range-pill.active { border-color: var(--z-dark); background: #f9f9f9; }
         .range-dot { width: 10px; height: 10px; border-radius: 50%; background: #D0D0D0; }
         .range-pill.active .range-dot { background: var(--z-green); box-shadow: 0 0 8px var(--z-green); }
@@ -44,27 +45,27 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f9f9f9; }
-        .num-btn { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #eee; font-size: 11px; font-weight: 800; background: white; }
+        .num-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid #eee; font-size: 11px; font-weight: 800; background: white; }
         .num-btn.active { background: var(--z-dark); color: white; border-color: var(--z-dark); }
 
         #actionSheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
         #actionSheet.open { transform: translateY(0); }
     </style>
 </head>
-<body class="flex flex-col">
+<body class="flex flex-col h-screen">
 
-    <!-- LOGIN GATE -->
+    <!-- LOGIN -->
     <div id="loginGate" class="fixed inset-0 bg-white z-[300] flex flex-col items-center justify-center p-8">
         <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-16 mb-12">
         <div class="w-full max-w-sm space-y-4">
             <h1 class="text-xl font-extrabold text-center mb-6">Partner Login</h1>
-            <input type="email" id="email" value="raghav.ch2003@gmail.com" class="w-full p-4 border rounded-xl outline-none focus:border-red-500 h-14" placeholder="Email Address">
-            <input type="password" id="password" value="12345" class="w-full p-4 border rounded-xl outline-none focus:border-red-500 h-14" placeholder="Password">
-            <button onclick="checkLogin()" class="z-btn-main shadow-lg mt-4">Continue</button>
+            <input type="email" id="email" value="raghav.ch2003@gmail.com" class="w-full p-4 border rounded-xl outline-none h-14" placeholder="Email">
+            <input type="password" id="password" value="12345" class="w-full p-4 border rounded-xl outline-none h-14" placeholder="Password">
+            <button onclick="checkLogin()" class="z-btn-main shadow-lg mt-4">Login</button>
         </div>
     </div>
 
-    <!-- ONBOARDING WIZARD -->
+    <!-- WIZARD -->
     <div id="setupWizard" class="fixed inset-0 bg-white z-[200] hidden flex flex-col">
         <header class="p-4 border-b flex items-center justify-between">
             <button onclick="wizardBack()" id="w-back" class="text-gray-400 font-bold opacity-0 pointer-events-none flex items-center gap-1">
@@ -75,16 +76,14 @@
         </header>
 
         <div class="flex-grow p-6 overflow-y-auto">
-            <!-- Step 1: Welcome -->
             <div id="w-step1" class="wizard-step active items-center justify-center text-center">
                 <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-3xl">🏛️</span></div>
                 <h2 class="text-2xl font-extrabold mb-1">SD Public School</h2>
-                <p class="text-gray-400 font-bold mb-4">New Delhi</p>
-                <p class="text-gray-500 text-sm mb-12 max-w-xs">Let's set up your monthly schedule to ensure accurate meal forecasts for your students.</p>
-                <button onclick="wizardNext()" class="z-btn-main max-w-sm">Get Started</button>
+                <p class="text-gray-400 font-bold mb-8">New Delhi</p>
+                <button onclick="wizardNext()" class="z-btn-main max-w-sm">Set Schedule</button>
             </div>
 
-            <!-- Step 2: Weekly Setup -->
+            <!-- WEEKLY HOLIDAYS STEP -->
             <div id="w-step2" class="wizard-step max-w-2xl mx-auto">
                 <h2 class="text-3xl font-extrabold mb-1">Weekly Holidays</h2>
                 <p class="text-gray-500 mb-8">When is your center closed?</p>
@@ -96,19 +95,23 @@
                     <button onclick="applyPattern('clear')" class="pat-btn text-red-500">Reset</button>
                 </div>
 
-                <div id="weekend-controls" class="space-y-2 pb-20"></div>
+                <div id="weekend-controls" class="space-y-1 mb-6"></div>
+                
+                <!-- CTA PREVIEW CLICK -->
+                <button onclick="openPreview()" class="w-full py-4 mb-20 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
+                    📅 Preview March Calendar
+                </button>
 
                 <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto">
-                    <button onclick="wizardNext()" class="z-btn-main">Next: National Holidays</button>
+                    <button onclick="wizardNext()" class="z-btn-main">Next</button>
                 </div>
             </div>
 
-            <!-- Step 3: National -->
             <div id="w-step3" class="wizard-step max-w-sm mx-auto">
                 <h2 class="text-2xl font-extrabold mb-1">National Holidays</h2>
                 <p class="text-gray-500 mb-8">Confirm holidays for March 2026.</p>
                 <div id="nat-checklist" class="space-y-3 mb-10"></div>
-                <button onclick="finishWizard()" class="z-btn-main">Go to Dashboard</button>
+                <button onclick="finishWizard()" class="z-btn-main">Finish</button>
             </div>
         </div>
     </div>
@@ -121,20 +124,15 @@
                 <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white"><span>📸</span> Attendance</button>
                 <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50"><span>📅</span> Calendar</button>
             </nav>
-            <div class="mt-auto pt-6 border-t">
-                <p class="text-xs font-black text-gray-300 uppercase mb-1">Center</p>
-                <p class="font-bold text-sm">SD Public, New Delhi</p>
-            </div>
         </aside>
 
         <main class="flex-grow flex flex-col bg-[#FDFDFD] overflow-hidden">
             <header class="p-4 border-b flex justify-between items-center bg-white px-6">
                 <div class="lg:hidden flex flex-col">
                     <span class="text-[10px] font-black text-red-500 uppercase">SD Public School</span>
-                    <span class="text-xs font-bold text-gray-400">New Delhi</span>
                 </div>
                 <h2 id="view-header" class="text-lg font-extrabold hidden lg:block">Attendance</h2>
-                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none">
+                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none border-none">
                     <option value="en">English</option><option value="hi">हिन्दी</option>
                 </select>
             </header>
@@ -173,7 +171,6 @@
                             <div class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full day-sch"></div> Holiday</div>
                         </div>
 
-                        <!-- VACATION CTA RESTORED -->
                         <div id="rangeToggle" onclick="toggleRangeMode()" class="range-pill mb-10">
                             <div class="range-dot"></div>
                             <span>Tap Start & End Dates (For Vacations)</span>
@@ -187,17 +184,9 @@
                 </div>
             </div>
         </main>
-
-        <aside class="w-64 bg-white border-l p-8 hidden lg:flex flex-col justify-center text-center">
-            <div class="bg-black text-white p-8 rounded-[36px] shadow-2xl">
-                <h4 id="mealForecast" class="text-4xl font-black text-white mb-2">0</h4>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Expected Meals</p>
-                <p class="text-[9px] text-gray-500 mt-4 leading-relaxed font-bold">For SD Public School,<br>New Delhi</p>
-            </div>
-        </aside>
     </div>
 
-    <!-- BOTTOM ACTION SHEET -->
+    <!-- ACTION SHEET -->
     <div id="sheetOverlay" onclick="closeSheet()" class="fixed inset-0 bg-black/40 z-[400] hidden backdrop-blur-sm"></div>
     <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[40px] p-10 pb-12 shadow-2xl flex flex-col items-center">
         <div class="w-12 h-1.5 bg-gray-200 rounded-full mb-8"></div>
@@ -243,19 +232,37 @@
             renderWizard();
         }
 
+        // PREVIEW FOR RECURRING HOLIDAYS
+        function openPreview() {
+            const content = document.getElementById('sheetContent');
+            content.innerHTML = `
+                <div class="w-full">
+                    <h3 class="text-xl font-extrabold mb-6 text-center">March Preview</h3>
+                    <div id="previewGrid" class="grid grid-cols-7 gap-y-3 gap-x-1 text-center mb-8"></div>
+                    <button onclick="closeSheet()" class="z-btn-main">Got it</button>
+                </div>
+            `;
+            const grid = document.getElementById('previewGrid');
+            const first = new Date(2026, 2, 1).getDay(); for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
+            for(let d=1; d<=31; d++) {
+                const status = getDayStatus(d);
+                grid.innerHTML += `<div class="w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-full day-${status.type}">${d}</div>`;
+            }
+            document.getElementById('sheetOverlay').classList.remove('hidden');
+            document.getElementById('actionSheet').classList.add('open');
+        }
+
         function renderCalendar() {
             const grid = document.getElementById('mainGrid'); grid.innerHTML = '';
             const first = new Date(2026, 2, 1).getDay(); for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
-            let hCount = 0;
             for(let d=1; d<=31; d++) {
                 const status = getDayStatus(d);
                 const day = document.createElement('div');
                 day.className = `day-circle day-${status.type} ${status.name ? 'has-name' : ''}`;
                 if(app.rangeMode && app.rangeStart === d) day.classList.add('ring-4', 'ring-black', 'ring-offset-4');
                 day.innerText = d; day.onclick = () => onDayClick(d);
-                grid.appendChild(day); if(status.type !== 'none') hCount++;
+                grid.appendChild(day);
             }
-            document.getElementById('mealForecast').innerText = ((31 - hCount) * app.studentCount).toLocaleString();
         }
 
         function getDayStatus(d) {
@@ -278,26 +285,20 @@
             }
         }
 
-        function toggleRangeMode() { app.rangeMode = !app.rangeMode; app.rangeStart = null; document.getElementById('rangeToggle').classList.toggle('active'); renderCalendar(); }
-
         function openSheet(mode, data) {
             const content = document.getElementById('sheetContent');
             if(mode === 'add') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-6 text-center">Add Holiday (Mar ${app.activeDay})</h3><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="e.g. Annual Day"><button onclick="saveHoliday()" class="z-btn-main">Save Holiday</button>`;
             else if(mode === 'view') content.innerHTML = `<div class="text-center mb-10"><h3 class="text-3xl font-extrabold">${data.name}</h3><p class="text-gray-400 font-bold mt-2">March ${app.activeDay}</p></div><button onclick="removeHoliday()" class="w-full py-5 text-red-600 font-extrabold border-2 border-red-50 rounded-2xl mb-4">Remove Holiday</button>`;
-            else if(mode === 'addRange') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-2 text-center">Add Vacation</h3><p class="text-gray-400 mb-6 font-bold text-center">Mar ${data.s} to ${data.e}</p><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="e.g. Spring Break"><button onclick="saveRange(${data.s}, ${data.e})" class="z-btn-main">Save Vacation</button>`;
+            else if(mode === 'addRange') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-2 text-center">Add Vacation</h3><p class="text-gray-400 mb-6 font-bold text-center">Mar ${data.s} to ${data.e}</p><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="Spring Break"><button onclick="saveRange(${data.s}, ${data.e})" class="z-btn-main">Save Vacation</button>`;
             document.getElementById('sheetOverlay').classList.remove('hidden'); document.getElementById('actionSheet').classList.add('open');
         }
 
         function saveHoliday() { app.holidayData[app.activeDay] = { type: 'sch', name: document.getElementById('hName').value || 'Holiday' }; closeSheet(); renderCalendar(); }
         function removeHoliday() { delete app.holidayData[app.activeDay]; closeSheet(); renderCalendar(); }
         function saveRange(s, e) { for(let i=s; i<=e; i++) app.holidayData[i] = { type: 'sch', name: document.getElementById('hName').value || 'Vacation' }; app.rangeStart = null; closeSheet(); renderCalendar(); }
-        function closeSheet() { document.getElementById('sheetOverlay').classList.add('hidden'); document.getElementById('actionSheet').classList.remove('open'); }
-        
-        function setView(v) { 
-            app.view = v; document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); 
-            document.getElementById('view-header').innerText = v === 'scan' ? 'Attendance' : 'Calendar';
-        }
-
+        function closeSheet() { document.getElementById('sheetOverlay').classList.add('hidden'); document.getElementById('actionSheet').classList.remove('open'); app.rangeStart = null; renderCalendar(); }
+        function toggleRangeMode() { app.rangeMode = !app.rangeMode; app.rangeStart = null; document.getElementById('rangeToggle').classList.toggle('active'); renderCalendar(); }
+        function setView(v) { app.view = v; document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); }
         function renderNatChecklist() {
             const list = document.getElementById('nat-checklist'); list.innerHTML = '';
             i18n[app.lang].nats.forEach((h, idx) => {
