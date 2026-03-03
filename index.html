@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --z-red: #E23744; --z-dark: #1C1C1C; --z-gray: #696969; --z-bg: #F8F8F8; }
+        :root { --z-red: #E23744; --z-dark: #1C1C1C; --z-bg: #F8F8F8; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: white; color: var(--z-dark); overflow: hidden; }
         
         /* Tactical Calendar Colors */
@@ -27,9 +27,12 @@
         .wizard-step.active { display: flex; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .day-circle { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.95rem; }
+        .day-circle { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.95rem; position: relative; }
         .wkd-btn.active { background: var(--z-red); color: white; border-color: var(--z-red); }
         .num-btn.active { background: var(--z-dark); color: white; border-color: var(--z-dark); }
+
+        /* Tooltip-like indicator for named holidays */
+        .has-name::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; opacity: 0.6; }
 
         @media (min-width: 1024px) {
             .desktop-main { display: grid; grid-template-columns: 280px 1fr 340px; height: 100vh; }
@@ -49,7 +52,7 @@
             <input type="email" id="email" value="raghav.ch2003@gmail.com" class="z-input" placeholder="Email Address">
             <input type="password" id="password" value="12345" class="z-input" placeholder="Password">
             <button onclick="checkLogin()" class="z-btn-main text-lg mt-2">Login</button>
-            <p id="loginError" class="text-red-500 text-sm font-bold text-center hidden">Invalid credentials. Please try again.</p>
+            <p id="loginError" class="text-red-500 text-sm font-bold text-center hidden">Invalid credentials.</p>
         </div>
     </div>
 
@@ -64,67 +67,45 @@
         </header>
 
         <div class="flex-grow overflow-y-auto p-6 flex flex-col items-center">
-            <!-- Step 1: Welcome -->
             <div id="w-step1" class="wizard-step active w-full max-w-lg">
                 <div class="py-12 text-center">
-                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <span class="text-4xl">🎒</span>
-                    </div>
+                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-4xl">🎒</span></div>
                     <h2 class="text-3xl font-extrabold mb-4">Welcome, Raghav!</h2>
-                    <p class="text-gray-500 text-lg">Let's quickly set up your school schedule to ensure accurate meal forecasts for March 2026.</p>
+                    <p class="text-gray-500 text-lg">Let's set up your school schedule for March 2026.</p>
                 </div>
                 <div class="mt-auto pt-10"><button onclick="wizardNext()" class="z-btn-main">Set School Schedule</button></div>
             </div>
 
-            <!-- Step 2: Weekly Holidays -->
             <div id="w-step2" class="wizard-step w-full max-w-lg">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-extrabold mb-2">Weekly Holidays</h2>
-                    <p class="text-gray-500 font-medium">Which days is your school closed every week?</p>
-                </div>
+                <div class="mb-6"><h2 class="text-2xl font-extrabold mb-2">Weekly Holidays</h2><p class="text-gray-500 font-medium">Which days is your school closed every week?</p></div>
                 <div id="weekend-controls" class="space-y-3 mb-24"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto">
-                    <button onclick="wizardNext()" class="z-btn-main">Next: Confirm Holidays</button>
-                </div>
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto"><button onclick="wizardNext()" class="z-btn-main">Next: Confirm Holidays</button></div>
             </div>
 
-            <!-- Step 3: National Holidays -->
             <div id="w-step3" class="wizard-step w-full max-w-lg">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-extrabold mb-2">National Holidays</h2>
-                    <p class="text-gray-500 font-medium">Uncheck if your school remains OPEN on these days.</p>
-                </div>
+                <div class="mb-6"><h2 class="text-2xl font-extrabold mb-2">National Holidays</h2><p class="text-gray-500 font-medium">Uncheck if your school remains OPEN.</p></div>
                 <div id="nat-checklist" class="space-y-3 mb-24"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto">
-                    <button onclick="finishWizard()" class="z-btn-main">Go to Dashboard</button>
-                </div>
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto"><button onclick="finishWizard()" class="z-btn-main">Go to Dashboard</button></div>
             </div>
         </div>
     </div>
 
     <!-- 3. MAIN DASHBOARD -->
     <div id="mainContent" class="desktop-main flex-grow overflow-hidden hidden">
-        <!-- Sidebar Navigation -->
         <aside class="bg-white border-r p-8 hidden lg:flex flex-col">
             <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-12">
             <nav class="space-y-3">
-                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white">
-                    <span>📷</span> <span id="n-scan">Attendance</span>
-                </button>
-                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50">
-                    <span>📅</span> <span id="n-cal">Calendar</span>
-                </button>
+                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white"><span>📷</span> <span>Attendance</span></button>
+                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50"><span>📅</span> <span>Calendar</span></button>
             </nav>
         </aside>
 
         <main class="flex flex-col bg-[#FDFDFD] overflow-hidden">
-            <header class="p-4 border-b flex justify-between items-center bg-white">
+            <header class="p-4 border-b flex justify-between items-center bg-white px-6">
                 <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-6 lg:hidden">
                 <h2 id="view-header" class="text-xl font-extrabold">Attendance</h2>
-                <select id="langSelect" onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-sm outline-none">
-                    <option value="en">English</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="mr">मराठी</option>
+                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-sm outline-none">
+                    <option value="en">English</option><option value="hi">हिन्दी</option>
                 </select>
             </header>
 
@@ -136,69 +117,40 @@
                         <p class="text-white/30 font-black text-xs tracking-widest uppercase">Scanner Active</p>
                     </div>
                     <button onclick="markEmergencyTomorrow()" class="w-full max-w-sm z-card p-6 flex items-center gap-5 border-l-8 border-red-500 active:scale-95 transition-all">
-                        <span class="text-4xl">🚨</span>
-                        <div class="text-left">
-                            <p class="font-black text-red-600 uppercase text-xs tracking-wider">Emergency Update</p>
-                            <p class="font-extrabold text-lg">CLOSED TOMORROW</p>
-                        </div>
+                        <span class="text-4xl">🚨</span><div class="text-left"><p class="font-black text-red-600 uppercase text-xs tracking-wider">Emergency Update</p><p class="font-extrabold text-lg">CLOSED TOMORROW</p></div>
                     </button>
                 </div>
 
                 <!-- VIEW 2: CALENDAR -->
                 <div id="view-cal" class="hidden max-w-2xl mx-auto flex flex-col">
                     <div class="z-card p-6 mb-6">
-                        <div class="flex items-center justify-between mb-8">
-                            <h3 class="text-2xl font-extrabold">March 2026</h3>
-                            <div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div>
-                        </div>
-
+                        <div class="flex items-center justify-between mb-8"><h3 class="text-2xl font-extrabold">March 2026</h3><div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div></div>
                         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 text-[10px] font-black uppercase">
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-nat"></div><span id="lg-n">National</span></div>
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-wkd"></div><span id="lg-w">Weekly Off</span></div>
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-sch"></div><span id="lg-s">Holiday</span></div>
-                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-emg"></div><span id="lg-e">Closed</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-nat"></div><span>National</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-wkd"></div><span>Weekly Off</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-sch"></div><span>Holiday</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-emg"></div><span>Closed</span></div>
                         </div>
-
-                        <button id="rangeToggle" onclick="toggleRangeMode()" class="w-full mb-8 p-4 rounded-xl border-2 border-gray-100 font-extrabold flex items-center justify-center gap-3 transition-all text-xs">
-                            <span id="range-dot" class="w-3 h-3 rounded-full bg-gray-200"></span>
-                            <span id="l-range">TAP START & END DATES (FOR VACATIONS)</span>
+                        <button id="rangeToggle" onclick="toggleRangeMode()" class="w-full mb-8 p-4 rounded-xl border-2 border-gray-100 font-extrabold flex items-center justify-center gap-3 text-xs">
+                            <span id="range-dot" class="w-3 h-3 rounded-full bg-gray-200"></span><span>TAP START & END (VACATIONS)</span>
                         </button>
-
-                        <div class="grid grid-cols-7 text-center font-bold text-gray-400 text-xs mb-4">
-                            <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                        </div>
+                        <div class="grid grid-cols-7 text-center font-bold text-gray-400 text-xs mb-4"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
                         <div id="mainGrid" class="grid grid-cols-7 gap-y-4"></div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Forecast Panel -->
         <aside class="bg-white border-l p-8 hidden lg:flex flex-col justify-center items-center">
             <div class="bg-black text-white p-8 rounded-[40px] shadow-2xl w-full text-center">
                 <h4 id="mealForecast" class="text-5xl font-black text-white mb-2">0</h4>
-                <p id="l-for" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Expected Meals</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Expected Meals</p>
                 <button onclick="alert('Data synced!')" class="w-full mt-10 z-btn-main text-sm">Push Data</button>
             </div>
         </aside>
     </div>
 
     <script>
-        const i18n = {
-            en: {
-                nats: ["Holi (Mar 14)", "Eid (Mar 31)", "Independence Day", "Gandhi Jayanti", "Diwali"],
-                nScan: "Attendance", nCal: "Calendar", range: "TAP START & END DATES (FOR VACATIONS)", for: "Expected Meals",
-                lgN: "National", lgW: "Weekly Off", lgS: "Holiday", lgE: "Closed",
-                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-            },
-            hi: {
-                nats: ["होली (14 मार्च)", "ईद (31 मार्च)", "स्वतंत्रता दिवस", "गांधी जयंती", "दिवाली"],
-                nScan: "उपस्थिति", nCal: "कैलेंडर", range: "लंबी छुट्टी मोड (शुरूआत और अंत दबाएं)", for: "भोजन आवश्यकता",
-                lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "स्कूल छुट्टी", lgE: "आपातकालीन",
-                days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", " शनिवार"]
-            }
-        };
-
         let app = {
             lang: 'en', view: 'scan', studentCount: 450, 
             rangeMode: false, rangeStart: null, wizardStep: 1,
@@ -206,7 +158,11 @@
             activeNationals: [0, 1] 
         };
 
-        // --- AUTH & WIZARD NAVIGATION ---
+        const i18n = {
+            en: { days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], nats: ["Holi", "Eid"] },
+            hi: { days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], nats: ["होली", "ईद"] }
+        };
+
         function checkLogin() {
             if(document.getElementById('email').value === 'raghav.ch2003@gmail.com' && document.getElementById('password').value === '12345') {
                 document.getElementById('loginGate').classList.add('hidden');
@@ -221,7 +177,7 @@
                 app.wizardStep++;
                 document.getElementById(`w-step${app.wizardStep}`).classList.add('active');
                 if(app.wizardStep === 3) renderNatList();
-                updateWizardNav();
+                document.getElementById('w-back').style.opacity = "1"; document.getElementById('w-back').style.pointerEvents = "auto";
             }
         }
 
@@ -230,34 +186,19 @@
                 document.getElementById(`w-step${app.wizardStep}`).classList.remove('active');
                 app.wizardStep--;
                 document.getElementById(`w-step${app.wizardStep}`).classList.add('active');
-                updateWizardNav();
+                if(app.wizardStep === 1) { document.getElementById('w-back').style.opacity = "0"; document.getElementById('w-back').style.pointerEvents = "none"; }
             }
         }
 
-        function updateWizardNav() {
-            const back = document.getElementById('w-back');
-            back.style.opacity = app.wizardStep > 1 ? "1" : "0";
-            back.style.pointerEvents = app.wizardStep > 1 ? "auto" : "none";
-        }
+        function finishWizard() { document.getElementById('setupWizard').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden'); renderCalendar(); }
 
-        function finishWizard() {
-            document.getElementById('setupWizard').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            renderCalendar();
-        }
-
-        // --- CORE LOGIC (Preserved from original) ---
-        function updateLang(l) {
-            app.lang = l; const t = i18n[l];
-            document.getElementById('n-scan').innerText = t.nScan;
-            document.getElementById('n-cal').innerText = t.nCal;
-            document.getElementById('l-range').innerText = t.range;
-            document.getElementById('l-for').innerText = t.for;
-            document.getElementById('lg-n').innerText = t.lgN;
-            document.getElementById('lg-w').innerText = t.lgW;
-            document.getElementById('lg-s').innerText = t.lgS;
-            document.getElementById('lg-e').innerText = t.lgE;
-            renderWizard(); renderNatList(); renderCalendar();
+        function setView(v) { 
+            app.view = v; 
+            document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); 
+            document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); 
+            document.getElementById('view-header').innerText = v === 'scan' ? 'Attendance' : 'Calendar';
+            document.getElementById('nav-scan').className = v === 'scan' ? 'w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white' : 'w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50';
+            document.getElementById('nav-cal').className = v === 'cal' ? 'w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white' : 'w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50';
         }
 
         function renderWizard() {
@@ -273,12 +214,9 @@
 
         function renderNatList() {
             const list = document.getElementById('nat-checklist'); list.innerHTML = '';
-            i18n[app.lang].nats.slice(0, 2).forEach((h, idx) => {
+            i18n[app.lang].nats.forEach((h, idx) => {
                 const checked = app.activeNationals.includes(idx) ? 'checked' : '';
-                list.innerHTML += `<div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 flex justify-between items-center">
-                    <span class="font-extrabold text-gray-700">${h}</span>
-                    <input type="checkbox" onchange="toggleNat(${idx})" ${checked} class="w-6 h-6 accent-red-500">
-                </div>`;
+                list.innerHTML += `<div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 flex justify-between items-center"><span class="font-extrabold text-gray-700">${h}</span><input type="checkbox" onchange="toggleNat(${idx})" ${checked} class="w-6 h-6 accent-red-500"></div>`;
             });
         }
 
@@ -286,62 +224,66 @@
         function toggleWeekNum(dayIdx, num) { if(!app.weekendConfig[dayIdx]) app.weekendConfig[dayIdx] = []; if(app.weekendConfig[dayIdx].includes(num)) app.weekendConfig[dayIdx] = app.weekendConfig[dayIdx].filter(x => x !== num); else app.weekendConfig[dayIdx].push(num); renderWizard(); }
         function toggleNat(idx) { if(app.activeNationals.includes(idx)) app.activeNationals = app.activeNationals.filter(i => i !== idx); else app.activeNationals.push(idx); }
 
-        function setView(v) { 
-            app.view = v; 
-            document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); 
-            document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); 
-            document.getElementById('view-header').innerText = v === 'scan' ? 'Attendance' : 'Calendar';
-            
-            // Toggle active styles on sidebar
-            document.getElementById('nav-scan').className = v === 'scan' ? 'w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white' : 'w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50';
-            document.getElementById('nav-cal').className = v === 'cal' ? 'w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white' : 'w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50';
-        }
-
         function renderCalendar() {
             const grid = document.getElementById('mainGrid'); grid.innerHTML = '';
             const first = new Date(2026, 2, 1).getDay();
             for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
             let hCount = 0;
             for(let d=1; d<=31; d++) {
-                const type = getDayStatus(d);
+                const status = getDayStatus(d);
                 const day = document.createElement('div');
-                day.className = `day-circle day-${type} ${type==='none'?'text-gray-900':''}`;
-                if(app.rangeMode && app.rangeStart === d) day.classList.add('ring-2', 'ring-black', 'ring-offset-2');
-                day.innerText = d; day.onclick = () => onDayClick(d);
+                day.className = `day-circle day-${status.type} ${status.name ? 'has-name' : ''}`;
+                if(app.rangeMode && app.rangeStart === d) day.classList.add('ring-2', 'ring-black');
+                day.innerText = d; 
+                day.onclick = () => onDayClick(d);
                 grid.appendChild(day);
-                if(type !== 'none') hCount++;
+                if(status.type !== 'none') hCount++;
             }
             document.getElementById('mealForecast').innerText = ((31 - hCount) * app.studentCount).toLocaleString();
         }
 
         function getDayStatus(d) {
             if(app.holidayData[d]) return app.holidayData[d];
-            if(app.activeNationals.includes(0) && d === 14) return 'nat'; 
-            if(app.activeNationals.includes(1) && d === 31) return 'nat'; 
-            const date = new Date(2026, 2, d); const dow = date.getDay();
+            if(app.activeNationals.includes(0) && d === 14) return { type: 'nat', name: 'Holi' };
+            if(app.activeNationals.includes(1) && d === 31) return { type: 'nat', name: 'Eid' };
+            const date = new Date(2026, 2, d);
             const occurrence = Math.floor((d - 1) / 7) + 1;
-            if(app.weekendConfig[dow]?.includes(occurrence)) return 'wkd';
-            return 'none';
+            if(app.weekendConfig[date.getDay()]?.includes(occurrence)) return { type: 'wkd', name: 'Weekly Off' };
+            return { type: 'none', name: '' };
         }
 
         function onDayClick(d) {
-            if(!app.rangeMode) app.holidayData[d] = app.holidayData[d] === 'sch' ? 'none' : 'sch';
-            else { if(app.rangeStart === null) app.rangeStart = d; else { const s = Math.min(app.rangeStart, d); const e = Math.max(app.rangeStart, d); for(let i=s; i<=e; i++) app.holidayData[i] = 'sch'; app.rangeStart = null; } }
+            const status = getDayStatus(d);
+            if(!app.rangeMode) {
+                if(status.type === 'none') {
+                    const name = prompt("Enter Holiday Name:");
+                    if(name) { app.holidayData[d] = { type: 'sch', name: name }; }
+                } else {
+                    const remove = confirm(`Holiday: ${status.name}\nDo you want to remove this holiday?`);
+                    if(remove) delete app.holidayData[d];
+                }
+            } else {
+                if(app.rangeStart === null) app.rangeStart = d;
+                else {
+                    const name = prompt("Enter Vacation Name:");
+                    const s = Math.min(app.rangeStart, d); const e = Math.max(app.rangeStart, d);
+                    for(let i=s; i<=e; i++) app.holidayData[i] = { type: 'sch', name: name || 'Vacation' };
+                    app.rangeStart = null;
+                }
+            }
             renderCalendar();
         }
 
         function toggleRangeMode() { 
             app.rangeMode = !app.rangeMode; app.rangeStart = null;
-            const btn = document.getElementById('rangeToggle');
-            const dot = document.getElementById('range-dot');
-            if(app.rangeMode) { btn.classList.add('bg-black', 'text-white'); dot.classList.add('bg-green-500'); }
-            else { btn.classList.remove('bg-black', 'text-white'); dot.classList.remove('bg-green-500'); }
+            document.getElementById('rangeToggle').classList.toggle('bg-black');
+            document.getElementById('rangeToggle').classList.toggle('text-white');
+            document.getElementById('range-dot').classList.toggle('bg-green-500');
             renderCalendar(); 
         }
 
-        function markEmergencyTomorrow() { app.holidayData[4] = 'emg'; alert("Success: Tomorrow (March 4) marked CLOSED."); renderCalendar(); }
-
-        updateLang('en');
+        function markEmergencyTomorrow() { app.holidayData[4] = { type: 'emg', name: 'Emergency' }; alert("Success: Tomorrow marked CLOSED."); renderCalendar(); }
+        function updateLang(l) { app.lang = l; renderWizard(); renderNatList(); renderCalendar(); }
     </script>
 </body>
 </html>
