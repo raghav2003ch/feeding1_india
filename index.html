@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Feeding India | Operations Portal</title>
+    <title>Feeding India | School Operations</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; overflow: hidden; }
         
-        /* Google Calendar Circle Colors */
+        /* Google Calendar Style Colors */
         .day-nat { background: #f97316 !important; color: white !important; }
         .day-wkd { background: #3b82f6 !important; color: white !important; }
         .day-sch { background: #fbbf24 !important; color: black !important; }
@@ -19,7 +19,7 @@
         .wizard-step.active { display: block; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Google Style Circular Markers */
+        /* Circular Date Markers */
         .day-circle { 
             width: 42px; 
             height: 42px; 
@@ -64,8 +64,7 @@
                     <h2 id="ws2-title" class="text-3xl font-black text-slate-900 mb-2">National Holidays</h2>
                     <p id="ws2-sub" class="text-slate-500 font-bold">Uncheck if the school is OPEN on these days.</p>
                 </div>
-                <div id="nat-checklist" class="space-y-3 mb-10">
-                    </div>
+                <div id="nat-checklist" class="space-y-3 mb-10"></div>
                 <button onclick="finishSetup()" class="w-full bg-slate-900 text-white py-6 rounded-3xl font-black uppercase text-lg shadow-xl active:scale-95 transition-all">Go to March Dashboard</button>
             </div>
         </div>
@@ -76,10 +75,10 @@
         <aside class="bg-white border-r p-8 hidden lg:flex flex-col">
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/Feeding_India_Logo.png" alt="Logo" class="h-12 mb-12">
             <nav class="space-y-4">
-                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold bg-slate-900 text-white shadow-xl">
+                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold bg-slate-900 text-white shadow-xl transition-all">
                     <span>📸</span> <span id="n-scan">Attendance</span>
                 </button>
-                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold text-slate-400 hover:bg-slate-50">
+                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold text-slate-400 hover:bg-slate-50 transition-all">
                     <span>📅</span> <span id="n-cal">Calendar</span>
                 </button>
             </nav>
@@ -107,12 +106,11 @@
                     <button onclick="markEmergencyTomorrow()" class="w-full max-w-md bg-red-50 border-4 border-red-100 p-8 rounded-[40px] text-center active:scale-95 transition-all">
                         <p class="text-3xl mb-2">🚨</p>
                         <p id="em-t" class="font-black text-red-600 text-xl leading-none">CLOSED TOMORROW</p>
-                        <p id="em-s" class="text-red-400 text-[10px] font-bold uppercase mt-2">Mark for Advance Order Update</p>
                     </button>
                 </div>
 
                 <div id="view-cal" class="hidden h-full flex flex-col">
-                    <div class="flex items-center justify-between mb-8 px-4">
+                    <div class="flex items-center justify-between mb-4 px-4">
                         <h3 class="text-2xl font-semibold text-[#3c4043]">March 2026</h3>
                         <div class="flex gap-4 text-slate-400">
                             <span class="cursor-pointer">❮</span>
@@ -120,23 +118,23 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6 bg-white p-3 rounded-2xl border border-slate-100 text-[10px]">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4 bg-white p-3 rounded-2xl border border-slate-100 text-[10px]">
                         <div class="flex items-center gap-2 font-bold"><div class="w-4 h-4 rounded-full day-nat"></div><span id="lg-n">National</span></div>
                         <div class="flex items-center gap-2 font-bold"><div class="w-4 h-4 rounded-full day-wkd"></div><span id="lg-w">Weekly Off</span></div>
                         <div class="flex items-center gap-2 font-bold"><div class="w-4 h-4 rounded-full day-sch"></div><span id="lg-s">Holiday</span></div>
                         <div class="flex items-center gap-2 font-bold"><div class="w-4 h-4 rounded-full day-emg"></div><span id="lg-e">Closed</span></div>
                     </div>
 
+                    <button id="rangeToggle" onclick="toggleRangeMode()" class="w-full mb-6 p-4 rounded-2xl bg-white border-2 border-slate-200 font-black flex items-center justify-center gap-3 transition-all text-[10px] shadow-sm">
+                        <span id="range-dot" class="w-3 h-3 rounded-full bg-slate-200"></span>
+                        <span id="l-range">TAP START & END DATES (FOR VACATIONS)</span>
+                    </button>
+
                     <div class="grid grid-cols-7 text-center font-bold text-slate-500 uppercase mb-4 text-xs">
                         <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
                     </div>
                     <div id="mainGrid" class="grid grid-cols-7 gap-y-3">
                         </div>
-
-                    <button id="rangeToggle" onclick="toggleRangeMode()" class="w-full mt-auto p-4 rounded-2xl bg-white border-2 border-slate-200 font-black flex items-center justify-center gap-3 transition-all text-[10px] shadow-sm">
-                        <span id="range-dot" class="w-3 h-3 rounded-full bg-slate-200"></span>
-                        <span id="l-range">TAP START & END DATES (FOR VACATIONS)</span>
-                    </button>
                 </div>
             </div>
         </main>
@@ -145,7 +143,7 @@
             <div class="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl w-full text-center">
                 <h4 id="mealForecast" class="text-5xl font-black text-orange-400 mb-2">0</h4>
                 <p id="l-for" class="text-[10px] font-bold text-white/40 uppercase tracking-widest">Expected Meals</p>
-                <button onclick="alert('Data Success: Monthly forecast updated.')" class="w-full mt-8 bg-[#E23744] text-white py-4 rounded-2xl font-black uppercase text-[10px] shadow-lg">Push Data</button>
+                <button onclick="alert('Monthly forecast updated!')" class="w-full mt-8 bg-[#E23744] text-white py-4 rounded-2xl font-black uppercase text-[10px] shadow-lg active:scale-95 transition-all">Push Data</button>
             </div>
         </aside>
     </div>
@@ -155,22 +153,19 @@
             en: {
                 ws1: "Weekly Holidays", nats: ["Holi (Mar 14)", "Eid (Mar 31)", "Independence Day (Aug 15)", "Gandhi Jayanti (Oct 2)", "Diwali (Oct 29)"],
                 nScan: "Attendance", nCal: "Calendar", range: "Tap Start & End (Vacations)", for: "Expected Meals",
-                emT: "CLOSED TOMORROW", emS: "Mark for Advance Order Update",
-                lgN: "National", lgW: "Weekly Off", lgS: "School Holiday", lgE: "Emergency",
+                emT: "CLOSED TOMORROW", lgN: "National", lgW: "Weekly Off", lgS: "School Holiday", lgE: "Emergency",
                 days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
             },
             hi: {
                 ws1: "साप्ताहिक छुट्टियां", nats: ["होली (14 मार्च)", "ईद (31 मार्च)", "स्वतंत्रता दिवस (15 अगस्त)", "गांधी जयंती (2 अक्टूबर)", "दिवाली (29 अक्टूबर)"],
                 nScan: "उपस्थिति", nCal: "कैलेंडर", range: "लंबी छुट्टी मोड", for: "भोजन आवश्यकता",
-                emT: "कल स्कूल बंद है", emS: "कल का खाना अपडेट करें",
-                lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "स्कूल छुट्टी", lgE: "आपातकालीन",
+                emT: "कल स्कूल बंद है", lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "स्कूल छुट्टी", lgE: "आपातकालीन",
                 days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"]
             },
             mr: {
                 ws1: "साप्ताहिक सुट्ट्या", nats: ["होळी (१४ मार्च)", "ईद (३१ मार्च)", "स्वातंत्र्य दिन (१५ ऑगस्ट)", "गांधी जयंती (२ ऑक्टोबर)", "दिवाळी (२९ ऑक्टोबर)"],
                 nScan: "हजेरी", nCal: "कॅलेंडर", range: "मोठ्या सुट्ट्या मोड", for: "जेवण गरज",
-                emT: "उद्या शाळा बंद आहे", emS: "उद्याची मागणी थांबवा",
-                lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "शाळा सुट्टी", lgE: "आणीबाणी",
+                emT: "उद्या शाळा बंद आहे", lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "शाळा सुट्टी", lgE: "आणीबाणी",
                 days: ["रविवार", "सोमवार", "मंगळवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"]
             }
         };
@@ -187,7 +182,6 @@
             document.getElementById('n-scan').innerText = t.nScan;
             document.getElementById('n-cal').innerText = t.nCal;
             document.getElementById('em-t').innerText = t.emT;
-            document.getElementById('em-s').innerText = t.emS;
             document.getElementById('lg-n').innerText = t.lgN;
             document.getElementById('lg-w').innerText = t.lgW;
             document.getElementById('lg-s').innerText = t.lgS;
@@ -227,7 +221,7 @@
 
         function renderCalendar() {
             const grid = document.getElementById('mainGrid'); grid.innerHTML = '';
-            const first = new Date(2026, 2, 1).getDay(); // Sunday padding
+            const first = new Date(2026, 2, 1).getDay(); // Padding for March
             for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
             let hCount = 0;
             for(let d=1; d<=31; d++) {
