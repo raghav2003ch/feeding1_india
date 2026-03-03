@@ -19,30 +19,34 @@
         .day-circle { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; position: relative; }
         .has-name::after { content: ''; position: absolute; bottom: 5px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; opacity: 0.6; }
 
-        /* Zomato Design */
-        .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 56px; display: flex; align-items: center; justify-content: center; width: 100%; }
+        /* Zomato Buttons */
+        .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 56px; display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.1s; }
+        .z-btn-main:active { transform: scale(0.98); }
         .z-btn-green { background: var(--z-green); color: white; font-weight: 700; border-radius: 16px; height: 64px; font-size: 1.2rem; box-shadow: 0 10px 20px rgba(39, 180, 110, 0.2); }
         .z-card { background: white; border-radius: 32px; border: 1.5px solid #f0f0f0; box-shadow: 0 4px 25px rgba(0,0,0,0.03); }
 
-        /* Quick Patterns */
-        .pat-btn { border: 1.5px solid #F0F0F0; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; background: white; }
+        /* Patterns & Weekly Selection */
+        .pat-btn { border: 1.5px solid #F0F0F0; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; background: white; transition: 0.2s; }
         .pat-btn.active { border-color: var(--z-red); color: var(--z-red); background: #FFF5F6; }
-
-        /* Weekly Selection List */
         .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #f2f2f2; }
-        .num-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; font-size: 12px; font-weight: 800; color: #1c1c1c; background: white; }
+        .num-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; font-size: 12px; font-weight: 800; background: white; }
         .num-btn.active { background: #1c1c1c; color: white; border-color: #1c1c1c; }
 
-        /* Vacation Pill */
-        .range-pill { border: 1.5px solid #F0F0F0; padding: 18px; border-radius: 20px; font-weight: 800; font-size: 13px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; background: white; }
+        /* Vacation Range CTA */
+        .range-pill { border: 1.5px solid #F0F0F0; padding: 18px; border-radius: 20px; font-weight: 800; font-size: 13px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; background: white; transition: 0.2s; }
         .range-pill.active { border-color: var(--z-dark); background: #f9f9f9; }
         .range-dot { width: 10px; height: 10px; border-radius: 50%; background: #D0D0D0; }
         .range-pill.active .range-dot { background: var(--z-green); box-shadow: 0 0 8px var(--z-green); }
 
-        /* Scanner */
+        /* Scanner UI */
         .scanner-box { background: var(--z-dark); border-radius: 40px; position: relative; overflow: hidden; }
         .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--z-green); box-shadow: 0 0 15px var(--z-green); animation: scan 3s infinite ease-in-out; }
         @keyframes scan { 0%, 100% { top: 0; } 50% { top: 100%; } }
+
+        /* Wizard Logic */
+        .wizard-step { display: none; height: 100%; flex-direction: column; }
+        .wizard-step.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         #actionSheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
         #actionSheet.open { transform: translateY(0); }
@@ -50,7 +54,7 @@
 </head>
 <body class="flex flex-col h-screen overflow-hidden">
 
-    <!-- LOGIN -->
+    <!-- 1. LOGIN SCREEN -->
     <div id="loginGate" class="fixed inset-0 bg-white z-[300] flex flex-col items-center justify-center p-8">
         <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-16 mb-12">
         <div class="w-full max-w-sm space-y-4">
@@ -61,7 +65,7 @@
         </div>
     </div>
 
-    <!-- ONBOARDING WIZARD -->
+    <!-- 2. SETUP WIZARD -->
     <div id="setupWizard" class="fixed inset-0 bg-white z-[200] hidden flex flex-col">
         <header class="p-4 border-b flex items-center justify-between">
             <button onclick="wizardBack()" id="w-back" class="text-gray-400 font-bold opacity-0 pointer-events-none flex items-center gap-1">
@@ -72,27 +76,20 @@
         </header>
 
         <div class="flex-grow p-6 overflow-y-auto">
-            <div id="w-step1" class="wizard-step active items-center justify-center text-center">
-                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-3xl">🏛️</span></div>
-                <h2 class="text-2xl font-extrabold mb-1">SD Public School</h2>
-                <p class="text-gray-400 font-bold mb-8">New Delhi</p>
-                <button onclick="wizardNext()" class="z-btn-main max-w-sm">Set Schedule</button>
-            </div>
-
-            <!-- WEEKLY HOLIDAYS STEP (MATCHING YOUR SCREENSHOT) -->
-            <div id="w-step2" class="wizard-step max-w-2xl mx-auto py-4">
-                <h2 class="text-4xl font-extrabold mb-2">Weekly Holidays</h2>
+            <!-- STEP 1: WEEKLY HOLIDAYS (DIRECT ACCESS) -->
+            <div id="w-step1" class="wizard-step active max-w-2xl mx-auto py-4">
+                <h2 class="text-4xl font-extrabold mb-2 text-slate-900">Weekly Holidays</h2>
                 <p class="text-gray-500 text-lg mb-8">When is your center closed?</p>
 
                 <p class="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Quick Patterns</p>
-                <div class="flex flex-wrap gap-3 mb-12">
+                <div class="flex flex-wrap gap-3 mb-10">
                     <button onclick="applyPattern('sun', this)" class="pat-btn">Every Sunday</button>
                     <button onclick="applyPattern('sat-sun', this)" class="pat-btn">Sat & Sun</button>
                     <button onclick="applyPattern('alt-sat', this)" class="pat-btn">Alt. Saturdays</button>
                     <button onclick="applyPattern('clear', this)" class="pat-btn text-red-500 border-red-50">Reset</button>
                 </div>
 
-                <div id="weekend-controls" class="space-y-1 mb-8"></div>
+                <div id="weekend-controls" class="space-y-1 mb-6"></div>
                 
                 <button onclick="openPreview()" class="w-full py-4 mb-24 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
                     📅 Preview March Calendar
@@ -103,16 +100,17 @@
                 </div>
             </div>
 
-            <div id="w-step3" class="wizard-step max-w-sm mx-auto">
+            <!-- STEP 2: NATIONAL HOLIDAYS (ON SEPARATE PAGE) -->
+            <div id="w-step2" class="wizard-step max-w-sm mx-auto">
                 <h2 class="text-2xl font-extrabold mb-1">National Holidays</h2>
                 <p class="text-gray-500 mb-10">Confirm regional holidays for March 2026.</p>
                 <div id="nat-checklist" class="space-y-3 mb-12"></div>
-                <button onclick="finishWizard()" class="z-btn-main">Finish</button>
+                <button onclick="finishWizard()" class="z-btn-main">Finish & Dashboard</button>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP -->
+    <!-- 3. MAIN APP -->
     <div id="mainContent" class="flex-grow flex flex-col lg:flex-row overflow-hidden hidden">
         <aside class="w-64 bg-white border-r p-8 hidden lg:flex flex-col">
             <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-10">
@@ -126,7 +124,7 @@
         <main class="flex-grow flex flex-col bg-[#FDFDFD] overflow-hidden">
             <header class="p-4 border-b flex justify-between items-center bg-white px-6">
                 <h2 id="view-header" class="text-lg font-extrabold">Attendance</h2>
-                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none border-none">
+                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none">
                     <option value="en">English</option><option value="hi">हिन्दी</option>
                 </select>
             </header>
@@ -146,7 +144,7 @@
                         </div>
                     </div>
 
-                    <!-- CALENDAR -->
+                    <!-- CALENDAR (THE BIG VIEW) -->
                     <div id="view-cal" class="hidden max-w-3xl mx-auto flex flex-col">
                         <div class="z-card p-10 bg-white">
                             <div class="flex items-center justify-between mb-8"><h3 class="text-3xl font-extrabold text-[#1c1c1c]">March 2026</h3><div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div></div>
@@ -162,7 +160,7 @@
                     </div>
                 </div>
 
-                <!-- EXPECTED MEALS CARD -->
+                <!-- EXPECTED MEALS (LOCKED IN SIDEBAR) -->
                 <aside class="w-full lg:w-80 shrink-0 flex flex-col justify-center">
                     <div class="bg-black text-white p-10 rounded-[48px] shadow-2xl text-center">
                         <h4 id="mealForecast" class="text-5xl font-black mb-2">0</h4>
@@ -175,7 +173,7 @@
         </main>
     </div>
 
-    <!-- ACTION SHEETS -->
+    <!-- ACTION SHEET -->
     <div id="sheetOverlay" onclick="closeSheet()" class="fixed inset-0 bg-black/40 z-[400] hidden backdrop-blur-sm"></div>
     <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[40px] p-10 pb-12 shadow-2xl flex flex-col items-center">
         <div class="w-12 h-1.5 bg-gray-200 rounded-full mb-8"></div>
@@ -188,10 +186,13 @@
             hi: { days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], nats: ["होली", "ईद"] }
         };
 
-        let app = { lang: 'en', view: 'scan', studentCount: 450, rangeMode: false, rangeStart: null, wizardStep: 1, holidayData: {}, weekendConfig: { 0: [1,2,3,4,5] }, activeNationals: [0, 1] };
+        let app = { 
+            lang: 'en', view: 'scan', studentCount: 450, rangeMode: false, rangeStart: null, 
+            wizardStep: 1, holidayData: {}, weekendConfig: { 0: [1,2,3,4,5] }, activeNationals: [0, 1] 
+        };
 
         function checkLogin() { if(document.getElementById('email').value === 'raghav.ch2003@gmail.com' && document.getElementById('password').value === '12345') { document.getElementById('loginGate').classList.add('hidden'); document.getElementById('setupWizard').classList.remove('hidden'); renderWizard(); } }
-        function wizardNext() { if(app.wizardStep < 3) { document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); app.wizardStep++; document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); if(app.wizardStep === 3) renderNatChecklist(); document.getElementById('w-back').style.opacity = "1"; document.getElementById('w-back').style.pointerEvents = "auto"; } }
+        function wizardNext() { if(app.wizardStep < 2) { document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); app.wizardStep++; document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); if(app.wizardStep === 2) renderNatChecklist(); document.getElementById('w-back').style.opacity = "1"; document.getElementById('w-back').style.pointerEvents = "auto"; } }
         function wizardBack() { if(app.wizardStep > 1) { document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); app.wizardStep--; document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); if(app.wizardStep === 1) { document.getElementById('w-back').style.opacity = "0"; document.getElementById('w-back').style.pointerEvents = "none"; } } }
         function finishWizard() { document.getElementById('setupWizard').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden'); renderCalendar(); }
 
