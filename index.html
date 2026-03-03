@@ -10,40 +10,42 @@
         :root { --z-red: #E23744; --z-green: #27B46E; --z-dark: #12161F; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: white; color: #1c1c1c; overflow: hidden; height: 100vh; }
         
-        /* Calendar Colors */
+        /* Calendar Status Colors */
         .day-nat { background: #FF7E8B !important; color: white !important; }
         .day-wkd { background: #4A90E2 !important; color: white !important; }
         .day-sch { background: #F4C430 !important; color: black !important; }
         .day-emg { background: var(--z-red) !important; color: white !important; }
         
-        .day-circle { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; position: relative; }
+        .day-circle { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.95rem; position: relative; transition: 0.2s; }
         .has-name::after { content: ''; position: absolute; bottom: 5px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; opacity: 0.6; }
 
-        /* Zomato Buttons */
+        /* Zomato Design Elements */
         .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 56px; display: flex; align-items: center; justify-content: center; width: 100%; transition: transform 0.1s; }
         .z-btn-main:active { transform: scale(0.98); }
         .z-btn-green { background: var(--z-green); color: white; font-weight: 700; border-radius: 16px; height: 64px; font-size: 1.2rem; box-shadow: 0 10px 20px rgba(39, 180, 110, 0.2); }
         .z-card { background: white; border-radius: 32px; border: 1.5px solid #f0f0f0; box-shadow: 0 4px 25px rgba(0,0,0,0.03); }
 
-        /* Patterns & Weekly Selection */
+        /* Quick Patterns */
         .pat-btn { border: 1.5px solid #F0F0F0; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; background: white; transition: 0.2s; }
         .pat-btn.active { border-color: var(--z-red); color: var(--z-red); background: #FFF5F6; }
+
+        /* Weekly Selection List */
         .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #f2f2f2; }
-        .num-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; font-size: 12px; font-weight: 800; background: white; }
+        .num-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; font-size: 12px; font-weight: 800; color: #1c1c1c; background: white; }
         .num-btn.active { background: #1c1c1c; color: white; border-color: #1c1c1c; }
 
-        /* Vacation Range CTA */
+        /* Vacation Pill */
         .range-pill { border: 1.5px solid #F0F0F0; padding: 18px; border-radius: 20px; font-weight: 800; font-size: 13px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer; background: white; transition: 0.2s; }
         .range-pill.active { border-color: var(--z-dark); background: #f9f9f9; }
         .range-dot { width: 10px; height: 10px; border-radius: 50%; background: #D0D0D0; }
         .range-pill.active .range-dot { background: var(--z-green); box-shadow: 0 0 8px var(--z-green); }
 
-        /* Scanner UI */
+        /* Scanner */
         .scanner-box { background: var(--z-dark); border-radius: 40px; position: relative; overflow: hidden; }
         .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: var(--z-green); box-shadow: 0 0 15px var(--z-green); animation: scan 3s infinite ease-in-out; }
         @keyframes scan { 0%, 100% { top: 0; } 50% { top: 100%; } }
 
-        /* Wizard Logic */
+        /* Step Logic */
         .wizard-step { display: none; height: 100%; flex-direction: column; }
         .wizard-step.active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -58,10 +60,10 @@
     <div id="loginGate" class="fixed inset-0 bg-white z-[300] flex flex-col items-center justify-center p-8">
         <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-16 mb-12">
         <div class="w-full max-w-sm space-y-4">
-            <h1 class="text-xl font-extrabold text-center mb-6">Partner Login</h1>
+            <h1 id="t-loginTitle" class="text-xl font-extrabold text-center mb-6">Partner Login</h1>
             <input type="email" id="email" value="raghav.ch2003@gmail.com" class="w-full p-4 border rounded-xl outline-none" placeholder="Email">
             <input type="password" id="password" value="12345" class="w-full p-4 border rounded-xl outline-none" placeholder="Password">
-            <button onclick="checkLogin()" class="z-btn-main shadow-lg mt-4">Login</button>
+            <button onclick="checkLogin()" id="t-btnLogin" class="z-btn-main shadow-lg mt-4">Login</button>
         </div>
     </div>
 
@@ -69,54 +71,54 @@
     <div id="setupWizard" class="fixed inset-0 bg-white z-[200] hidden flex flex-col">
         <header class="p-4 border-b flex items-center justify-between">
             <button onclick="wizardBack()" id="w-back" class="text-gray-400 font-bold opacity-0 pointer-events-none flex items-center gap-1">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg> Back
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg> <span id="t-btnBack">Back</span>
             </button>
             <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-6">
             <div class="w-10"></div>
         </header>
 
         <div class="flex-grow p-6 overflow-y-auto">
-            <!-- STEP 1: WEEKLY HOLIDAYS (DIRECT ACCESS) -->
+            <!-- Step 1: Weekly -->
             <div id="w-step1" class="wizard-step active max-w-2xl mx-auto py-4">
-                <h2 class="text-4xl font-extrabold mb-2 text-slate-900">Weekly Holidays</h2>
-                <p class="text-gray-500 text-lg mb-8">When is your center closed?</p>
+                <h2 id="t-weeklyHols" class="text-4xl font-extrabold mb-2">Weekly Holidays</h2>
+                <p id="t-weeklyHolsSub" class="text-gray-500 text-lg mb-8">When is your center closed?</p>
 
-                <p class="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Quick Patterns</p>
+                <p id="t-quickPatterns" class="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Quick Patterns</p>
                 <div class="flex flex-wrap gap-3 mb-10">
-                    <button onclick="applyPattern('sun', this)" class="pat-btn">Every Sunday</button>
-                    <button onclick="applyPattern('sat-sun', this)" class="pat-btn">Sat & Sun</button>
-                    <button onclick="applyPattern('alt-sat', this)" class="pat-btn">Alt. Saturdays</button>
-                    <button onclick="applyPattern('clear', this)" class="pat-btn text-red-500 border-red-50">Reset</button>
+                    <button onclick="applyPattern('sun', this)" id="t-patSun" class="pat-btn">Every Sunday</button>
+                    <button onclick="applyPattern('sat-sun', this)" id="t-patBoth" class="pat-btn">Sat & Sun</button>
+                    <button onclick="applyPattern('alt-sat', this)" id="t-patAlt" class="pat-btn">Alt. Saturdays</button>
+                    <button onclick="applyPattern('clear', this)" id="t-patReset" class="pat-btn text-red-500 border-red-50">Reset</button>
                 </div>
 
                 <div id="weekend-controls" class="space-y-1 mb-6"></div>
                 
-                <button onclick="openPreview()" class="w-full py-4 mb-24 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
+                <button onclick="openPreview()" id="t-btnPreview" class="w-full py-4 mb-24 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
                     📅 Preview March Calendar
                 </button>
 
                 <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto">
-                    <button onclick="wizardNext()" class="z-btn-main">Continue</button>
+                    <button onclick="wizardNext()" id="t-btnContinue" class="z-btn-main">Continue</button>
                 </div>
             </div>
 
-            <!-- STEP 2: NATIONAL HOLIDAYS (ON SEPARATE PAGE) -->
+            <!-- Step 2: National -->
             <div id="w-step2" class="wizard-step max-w-sm mx-auto">
-                <h2 class="text-2xl font-extrabold mb-1">National Holidays</h2>
-                <p class="text-gray-500 mb-10">Confirm regional holidays for March 2026.</p>
+                <h2 id="t-natHols" class="text-2xl font-extrabold mb-1">National Holidays</h2>
+                <p id="t-natHolsSub" class="text-gray-500 mb-10">Confirm regional holidays for March 2026.</p>
                 <div id="nat-checklist" class="space-y-3 mb-12"></div>
-                <button onclick="finishWizard()" class="z-btn-main">Finish & Dashboard</button>
+                <button onclick="finishWizard()" id="t-btnFinish" class="z-btn-main">Finish & Dashboard</button>
             </div>
         </div>
     </div>
 
-    <!-- 3. MAIN APP -->
+    <!-- 3. MAIN DASHBOARD -->
     <div id="mainContent" class="flex-grow flex flex-col lg:flex-row overflow-hidden hidden">
         <aside class="w-64 bg-white border-r p-8 hidden lg:flex flex-col">
             <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-10">
             <nav class="space-y-2">
-                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white">📸 Attendance</button>
-                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50">📅 Calendar</button>
+                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white">📸 <span id="t-navAttendance">Attendance</span></button>
+                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50">📅 <span id="t-navCalendar">Calendar</span></button>
             </nav>
             <div class="mt-auto pt-6 border-t"><p class="text-[10px] font-black text-gray-300 uppercase mb-1">Center</p><p class="font-bold text-sm">SD Public, New Delhi</p></div>
         </aside>
@@ -124,7 +126,7 @@
         <main class="flex-grow flex flex-col bg-[#FDFDFD] overflow-hidden">
             <header class="p-4 border-b flex justify-between items-center bg-white px-6">
                 <h2 id="view-header" class="text-lg font-extrabold">Attendance</h2>
-                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none">
+                <select id="langSelect" onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-xs outline-none border-none">
                     <option value="en">English</option><option value="hi">हिन्दी</option>
                 </select>
             </header>
@@ -135,36 +137,36 @@
                     <div id="view-scan" class="h-full flex flex-col items-center justify-center space-y-8">
                         <div class="w-full max-w-sm aspect-square scanner-box flex items-center justify-center">
                             <div class="scan-line"></div>
-                            <p class="text-[#27B46E] font-black text-xs tracking-[0.3em]">SCANNER ACTIVE</p>
+                            <p id="t-scannerActive" class="text-[#27B46E] font-black text-xs tracking-[0.3em]">SCANNER ACTIVE</p>
                         </div>
-                        <button class="w-full max-w-sm z-btn-green">End Meal Session</button>
+                        <button id="t-btnEndMeal" class="w-full max-w-sm z-btn-green">End Meal Session</button>
                         <div onclick="markEmergencyTomorrow()" class="w-full max-w-sm bg-white p-5 rounded-[24px] shadow-sm border border-gray-100 flex items-center gap-5 cursor-pointer">
                             <div class="w-1.5 h-10 bg-[#E23744] rounded-full"></div>
-                            <span class="text-2xl">🚨</span><div><p class="text-[9px] font-black uppercase text-red-500 tracking-widest">Instant Update</p><p class="text-lg font-extrabold">Closed Tomorrow</p></div>
+                            <span class="text-2xl">🚨</span><div><p id="t-updateTag" class="text-[9px] font-black uppercase text-red-500 tracking-widest">Instant Update</p><p id="t-closedTmr" class="text-lg font-extrabold">Closed Tomorrow</p></div>
                         </div>
                     </div>
 
-                    <!-- CALENDAR (THE BIG VIEW) -->
+                    <!-- CALENDAR -->
                     <div id="view-cal" class="hidden max-w-3xl mx-auto flex flex-col">
                         <div class="z-card p-10 bg-white">
-                            <div class="flex items-center justify-between mb-8"><h3 class="text-3xl font-extrabold text-[#1c1c1c]">March 2026</h3><div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div></div>
+                            <div class="flex items-center justify-between mb-8"><h3 id="t-monthYear" class="text-3xl font-extrabold text-[#1c1c1c]">March 2026</h3><div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div></div>
                             <div class="flex flex-wrap gap-x-8 gap-y-4 mb-8 text-[10px] font-black uppercase text-gray-400">
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-nat"></div> <span>National</span></div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-wkd"></div> <span>Weekly Off</span></div>
-                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-sch"></div> <span>Holiday</span></div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-nat"></div> <span id="t-legNat">National</span></div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-wkd"></div> <span id="t-legWkd">Weekly Off</span></div>
+                                <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-sch"></div> <span id="t-legSch">Holiday</span></div>
                             </div>
-                            <div id="rangeToggle" onclick="toggleRangeMode()" class="range-pill mb-12"><div class="range-dot"></div><span>Tap Start & End Dates (For Vacations)</span></div>
+                            <div id="rangeToggle" onclick="toggleRangeMode()" class="range-pill mb-12"><div class="range-dot"></div><span id="t-rangeCta">Tap Start & End Dates (For Vacations)</span></div>
                             <div class="grid grid-cols-7 text-center font-bold text-gray-400 text-xs mb-4"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
                             <div id="mainGrid" class="grid grid-cols-7 gap-y-6"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- EXPECTED MEALS (LOCKED IN SIDEBAR) -->
+                <!-- EXPECTED MEALS CARD -->
                 <aside class="w-full lg:w-80 shrink-0 flex flex-col justify-center">
                     <div class="bg-black text-white p-10 rounded-[48px] shadow-2xl text-center">
                         <h4 id="mealForecast" class="text-5xl font-black mb-2">0</h4>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">Expected Meals</p>
+                        <p id="t-legForecast" class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-4">Expected Meals</p>
                         <div class="h-px bg-gray-800 w-12 mx-auto mb-4"></div>
                         <p class="text-[10px] text-gray-400 font-bold leading-relaxed">For SD Public School,<br>New Delhi</p>
                     </div>
@@ -182,14 +184,47 @@
 
     <script>
         const i18n = {
-            en: { days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], nats: ["Holi", "Eid"] },
-            hi: { days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], nats: ["होली", "ईद"] }
+            en: {
+                loginTitle: "Partner Login", btnLogin: "Login", btnBack: "Back",
+                weeklyHols: "Weekly Holidays", weeklyHolsSub: "When is your center closed?", quickPatterns: "Quick Patterns",
+                patSun: "Every Sunday", patBoth: "Sat & Sun", patAlt: "Alt. Saturdays", patReset: "Reset",
+                btnPreview: "📅 Preview March Calendar", btnContinue: "Continue",
+                natHols: "National Holidays", natHolsSub: "Confirm regional holidays for March 2026.", btnFinish: "Finish & Dashboard",
+                navAttendance: "Attendance", navCalendar: "Calendar",
+                scannerActive: "SCANNER ACTIVE", btnEndMeal: "End Meal Session", updateTag: "Instant Update", closedTmr: "Closed Tomorrow",
+                monthYear: "March 2026", legNat: "National", legWkd: "Weekly Off", legSch: "Holiday", legForecast: "Expected Meals",
+                rangeCta: "Tap Start & End Dates (For Vacations)",
+                actAddTitle: "Add Holiday", actViewTitle: "Holiday Details", actRangeTitle: "Add Vacation", actSave: "Save", actRemove: "Remove Holiday",
+                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], nats: ["Holi", "Eid"]
+            },
+            hi: {
+                loginTitle: "पार्टनर लॉगिन", btnLogin: "लॉगिन करें", btnBack: "पीछे",
+                weeklyHols: "साप्ताहिक छुट्टियां", weeklyHolsSub: "आपका सेंटर कब बंद रहता है?", quickPatterns: "क्विक पैटर्न्स",
+                patSun: "हर रविवार", patBoth: "शनि और रवि", patAlt: "वैकल्पिक शनिवार", patReset: "रीसेट",
+                btnPreview: "📅 मार्च कैलेंडर देखें", btnContinue: "आगे बढ़ें",
+                natHols: "राष्ट्रीय छुट्टियां", natHolsSub: "मार्च 2026 के लिए क्षेत्रीय छुट्टियों की पुष्टि करें।", btnFinish: "पूरा करें",
+                navAttendance: "उपस्थिति", navCalendar: "कैलेंडर",
+                scannerActive: "स्कैनर सक्रिय है", btnEndMeal: "भोजन सत्र समाप्त करें", updateTag: "त्वरित अपडेट", closedTmr: "कल बंद है",
+                monthYear: "मार्च 2026", legNat: "राष्ट्रीय", legWkd: "साप्ताहिक छुट्टी", legSch: "छुट्टी", legForecast: "अनुमानित भोजन",
+                rangeCta: "छुट्टी मोड (शुरूआत और अंत दबाएं)",
+                actAddTitle: "छुट्टी जोड़ें", actViewTitle: "छुट्टी का विवरण", actRangeTitle: "लंबी छुट्टी जोड़ें", actSave: "सेव करें", actRemove: "छुट्टी हटाएं",
+                days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], nats: ["होली", "ईद"]
+            }
         };
 
         let app = { 
             lang: 'en', view: 'scan', studentCount: 450, rangeMode: false, rangeStart: null, 
             wizardStep: 1, holidayData: {}, weekendConfig: { 0: [1,2,3,4,5] }, activeNationals: [0, 1] 
         };
+
+        function updateLang(l) {
+            app.lang = l; const t = i18n[l];
+            const ids = ['loginTitle','btnLogin','btnBack','weeklyHols','weeklyHolsSub','quickPatterns','patSun','patBoth','patAlt','patReset','btnPreview','btnContinue','natHols','natHolsSub','btnFinish','navAttendance','navCalendar','scannerActive','btnEndMeal','updateTag','closedTmr','monthYear','legNat','legWkd','legSch','legForecast','rangeCta'];
+            ids.forEach(id => { const el = document.getElementById('t-'+id); if(el) el.innerText = t[id]; });
+            renderWizard(); renderCalendar();
+            if(app.view === 'scan') document.getElementById('view-header').innerText = t.navAttendance;
+            else document.getElementById('view-header').innerText = t.navCalendar;
+        }
 
         function checkLogin() { if(document.getElementById('email').value === 'raghav.ch2003@gmail.com' && document.getElementById('password').value === '12345') { document.getElementById('loginGate').classList.add('hidden'); document.getElementById('setupWizard').classList.remove('hidden'); renderWizard(); } }
         function wizardNext() { if(app.wizardStep < 2) { document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); app.wizardStep++; document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); if(app.wizardStep === 2) renderNatChecklist(); document.getElementById('w-back').style.opacity = "1"; document.getElementById('w-back').style.pointerEvents = "auto"; } }
@@ -263,10 +298,10 @@
         }
 
         function openSheet(mode, data) {
-            const content = document.getElementById('sheetContent');
-            if(mode === 'add') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-6 text-center">Add Holiday (Mar ${app.activeDay})</h3><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="e.g. Annual Day"><button onclick="saveHoliday()" class="z-btn-main">Save Holiday</button>`;
-            else if(mode === 'view') content.innerHTML = `<div class="text-center mb-10"><h3 class="text-3xl font-extrabold">${data.name}</h3><p class="text-gray-400 font-bold mt-2">March ${app.activeDay}</p></div><button onclick="removeHoliday()" class="w-full py-5 text-red-600 font-extrabold border-2 border-red-50 rounded-2xl mb-4">Remove Holiday</button>`;
-            else if(mode === 'addRange') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-2 text-center">Add Vacation</h3><p class="text-gray-400 mb-6 font-bold text-center">Mar ${data.s} to ${data.e}</p><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="Spring Break"><button onclick="saveRange(${data.s}, ${data.e})" class="z-btn-main">Save Vacation</button>`;
+            const t = i18n[app.lang]; const content = document.getElementById('sheetContent');
+            if(mode === 'add') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-6 text-center">${t.actAddTitle} (Mar ${app.activeDay})</h3><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="e.g. Annual Day"><button onclick="saveHoliday()" class="z-btn-main">${t.actSave}</button>`;
+            else if(mode === 'view') content.innerHTML = `<div class="text-center mb-10"><h3 class="text-3xl font-extrabold">${data.name}</h3><p class="text-gray-400 font-bold mt-2">March ${app.activeDay}</p></div><button onclick="removeHoliday()" class="w-full py-5 text-red-600 font-extrabold border-2 border-red-50 rounded-2xl mb-4">${t.actRemove}</button>`;
+            else if(mode === 'addRange') content.innerHTML = `<h3 class="text-2xl font-extrabold mb-2 text-center">${t.actRangeTitle}</h3><p class="text-gray-400 mb-6 font-bold text-center">Mar ${data.s} to ${data.e}</p><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-6" placeholder="Spring Break"><button onclick="saveRange(${data.s}, ${data.e})" class="z-btn-main">${t.actSave}</button>`;
             document.getElementById('sheetOverlay').classList.remove('hidden'); document.getElementById('actionSheet').classList.add('open');
         }
 
@@ -275,7 +310,7 @@
         function saveRange(s, e) { for(let i=s; i<=e; i++) app.holidayData[i] = { type: 'sch', name: document.getElementById('hName').value || 'Vacation' }; app.rangeStart = null; closeSheet(); renderCalendar(); }
         function closeSheet() { document.getElementById('sheetOverlay').classList.add('hidden'); document.getElementById('actionSheet').classList.remove('open'); app.rangeStart = null; renderCalendar(); }
         function toggleRangeMode() { app.rangeMode = !app.rangeMode; app.rangeStart = null; document.getElementById('rangeToggle').classList.toggle('active'); renderCalendar(); }
-        function setView(v) { app.view = v; document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); }
+        function setView(v) { app.view = v; document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); document.getElementById('view-header').innerText = i18n[app.lang][v==='scan'?'navAttendance':'navCalendar']; }
         function renderNatChecklist() {
             const list = document.getElementById('nat-checklist'); list.innerHTML = '';
             i18n[app.lang].nats.forEach((h, idx) => {
@@ -285,7 +320,6 @@
         }
         function toggleNat(idx) { if(app.activeNationals.includes(idx)) app.activeNationals = app.activeNationals.filter(i => i !== idx); else app.activeNationals.push(idx); }
         function markEmergencyTomorrow() { app.holidayData[4] = { type: 'emg', name: 'Emergency' }; alert("Marked CLOSED."); renderCalendar(); }
-        function updateLang(l) { app.lang = l; renderWizard(); renderCalendar(); }
 
         updateLang('en');
     </script>
