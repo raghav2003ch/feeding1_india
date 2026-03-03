@@ -5,396 +5,335 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Feeding India | Operations Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --z-red: #E23744; --z-dark: #1C1C1C; --z-bg: #F8F8F8; --z-green: #27AD75; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: white; color: var(--z-dark); overflow: hidden; }
+        :root { --z-red: #E23744; --z-dark: #1C1C1C; --z-bg: #F8F8F8; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: white; color: var(--z-dark); overflow: hidden; height: 100vh; }
         
-        /* Calendar Styles */
+        /* Tactical Calendar Status Colors */
         .day-nat { background: #FF7E8B !important; color: white !important; }
         .day-wkd { background: #4A90E2 !important; color: white !important; }
         .day-sch { background: #F4C430 !important; color: black !important; }
         .day-emg { background: var(--z-red) !important; color: white !important; }
         
-        /* UI Components */
-        .z-card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; }
-        .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 56px; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; border: none; cursor: pointer; }
-        .z-btn-green { background: var(--z-green); }
-        .z-btn-outline { border: 2px solid #E8E8E8; font-weight: 700; border-radius: 12px; height: 56px; display: flex; align-items: center; justify-content: center; width: 100%; }
-        
-        .wizard-step { display: none; height: 100%; flex-direction: column; }
-        .wizard-step.active { display: flex; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .day-circle { 
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 0.9rem; position: relative; transition: 0.2s; 
+        }
+        .has-name::after { content: ''; position: absolute; bottom: 5px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; opacity: 0.6; }
 
-        /* Holiday Selector Specifics */
-        .day-box { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 16px; border: 2px solid #F0F0F0; transition: 0.2s; cursor: pointer; }
-        .day-box.selected { border-color: var(--z-red); background: #FFF5F5; }
-        .day-box.has-config { background: #F0F7FF; border-color: #4A90E2; }
-        
-        .week-btn { width: 44px; height: 44px; border-radius: 12px; border: 2px solid #E8E8E8; font-weight: 800; transition: 0.2s; }
-        .week-btn.active { background: #4A90E2; color: white; border-color: #4A90E2; }
+        /* Zomato UI Components */
+        .z-btn-main { background: var(--z-red); color: white; font-weight: 800; border-radius: 12px; height: 54px; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; box-shadow: 0 4px 12px rgba(226, 55, 68, 0.2); }
+        .z-btn-main:active { transform: scale(0.97); }
+        .z-card { background: white; border-radius: 24px; border: 1.5px solid #f0f0f0; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+
+        /* Range CTA Styling (Matching Screenshot) */
+        .range-cta {
+            width: 100%; padding: 16px; border-radius: 18px; border: 1.5px solid #eee;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-weight: 800; font-size: 13px; color: #1c1c1c; text-transform: uppercase;
+            transition: 0.3s; background: white; cursor: pointer;
+        }
+        .range-cta.active { border-color: var(--z-dark); background: #f9f9f9; }
+        .range-dot { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; transition: 0.3s; }
+        .range-cta.active .range-dot { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+
+        .wizard-step { display: none; height: 100%; flex-direction: column; }
+        .wizard-step.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Weekly Selection */
+        .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-radius: 10px; background: #f9f9f9; margin-bottom: 4px; }
+        .num-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #eee; font-size: 12px; font-weight: 800; background: white; }
+        .num-btn.active { background: var(--z-dark); color: white; border-color: var(--z-dark); }
 
         #actionSheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
         #actionSheet.open { transform: translateY(0); }
-
-        .day-circle { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; font-weight: 700; position: relative; }
-        .has-name::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: currentColor; border-radius: 50%; }
-
-        @media (min-width: 1024px) { .desktop-main { display: grid; grid-template-columns: 280px 1fr 340px; height: 100vh; } }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="flex flex-col h-screen">
 
-    <!-- LOGIN SCREEN -->
+    <!-- LOGIN -->
     <div id="loginGate" class="fixed inset-0 bg-white z-[300] flex flex-col items-center justify-center p-8">
-        <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-14 mb-12">
-        <div class="w-full max-w-sm space-y-5">
-            <h1 id="t-loginTitle" class="text-2xl font-extrabold text-center text-gray-800">Partner Portal</h1>
-            <input type="email" id="email" value="raghav.ch2003@gmail.com" class="w-full p-4 rounded-xl border-2 border-gray-100 outline-none focus:border-red-500" placeholder="Email">
-            <input type="password" id="password" value="12345" class="w-full p-4 rounded-xl border-2 border-gray-100 outline-none focus:border-red-500" placeholder="Password">
-            <button onclick="checkLogin()" id="t-btnLogin" class="z-btn-main text-lg shadow-lg">Login</button>
+        <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-16 mb-12">
+        <div class="w-full max-w-sm space-y-4">
+            <h1 id="t-loginTitle" class="text-xl font-extrabold text-center">Partner Portal</h1>
+            <input type="email" id="email" value="raghav.ch2003@gmail.com" class="w-full p-4 border rounded-xl outline-none focus:border-red-500" placeholder="Email">
+            <input type="password" id="password" value="12345" class="w-full p-4 border rounded-xl outline-none focus:border-red-500" placeholder="Password">
+            <button onclick="checkLogin()" class="z-btn-main">Login</button>
         </div>
     </div>
 
-    <!-- ONBOARDING WIZARD -->
+    <!-- WIZARD -->
     <div id="setupWizard" class="fixed inset-0 bg-white z-[200] hidden flex flex-col">
-        <header class="p-5 border-b flex items-center justify-between">
-            <button onclick="wizardBack()" id="w-back" class="text-gray-400 font-bold flex items-center gap-1 opacity-0 pointer-events-none">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg> <span id="t-btnBack">Back</span>
+        <header class="p-4 border-b flex items-center justify-between">
+            <button onclick="wizardBack()" id="w-back" class="text-gray-400 font-bold opacity-0 pointer-events-none flex items-center gap-1">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M15 18l-6-6 6-6"/></svg> <span id="t-btnBack">Back</span>
             </button>
-            <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-7">
+            <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-6">
             <div class="w-10"></div>
         </header>
 
-        <div class="flex-grow overflow-y-auto p-6 flex flex-col items-center">
-            <!-- Step 1: Welcome -->
-            <div id="w-step1" class="wizard-step active w-full max-w-lg text-center">
-                <div class="py-12">
-                    <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6"><span class="text-4xl">👋</span></div>
-                    <h2 id="t-welcome" class="text-3xl font-extrabold mb-4 text-gray-900">Hello, Raghav!</h2>
-                    <p id="t-welcomeSub" class="text-gray-500 text-lg">Let's set up your operational calendar to ensure accurate meal supply.</p>
-                </div>
-                <div class="mt-auto pt-10"><button onclick="wizardNext()" id="t-btnStart" class="z-btn-main">Get Started</button></div>
+        <div class="flex-grow p-4 overflow-hidden">
+            <div id="w-step1" class="wizard-step active items-center justify-center text-center">
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-6"><span class="text-3xl">👋</span></div>
+                <h2 id="t-welcome" class="text-2xl font-extrabold mb-2">Hello, Raghav!</h2>
+                <p id="t-welcomeSub" class="text-gray-500 text-sm mb-10">Verify your school schedule for March 2026.</p>
+                <button onclick="wizardNext()" class="z-btn-main max-w-sm">Set Schedule</button>
             </div>
 
-            <!-- Step 2: NEW Weekly Holiday UI -->
-            <div id="w-step2" class="wizard-step w-full max-w-lg">
-                <div class="mb-6">
-                    <h2 id="t-weeklyHols" class="text-2xl font-extrabold mb-1">Weekly Holidays</h2>
-                    <p id="t-weeklyHolsSub" class="text-gray-500 font-medium">When is your center closed?</p>
-                </div>
-
-                <!-- Patterns -->
-                <p class="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Quick Patterns</p>
-                <div class="flex gap-2 overflow-x-auto pb-4 no-scrollbar">
-                    <button onclick="applyPreset('sun')" class="px-5 py-3 rounded-full border-2 border-gray-100 font-bold whitespace-nowrap text-sm hover:border-red-200">Every Sunday</button>
-                    <button onclick="applyPreset('ss')" class="px-5 py-3 rounded-full border-2 border-gray-100 font-bold whitespace-nowrap text-sm hover:border-red-200">Sat & Sun</button>
-                    <button onclick="applyPreset('altSat')" class="px-5 py-3 rounded-full border-2 border-gray-100 font-bold whitespace-nowrap text-sm hover:border-red-200">Alt. Saturdays</button>
-                    <button onclick="applyPreset('clear')" class="px-5 py-3 rounded-full border-2 border-red-50 text-red-500 font-bold whitespace-nowrap text-sm">Reset</button>
-                </div>
-
-                <!-- Day Grid -->
-                <p class="text-[10px] font-black uppercase text-gray-400 mt-6 mb-3 tracking-widest">1. Select Weekday</p>
-                <div id="wizard-day-grid" class="grid grid-cols-7 gap-2 mb-6"></div>
-
-                <!-- Week Detail -->
-                <div id="week-selector-area" class="invisible bg-gray-50 p-5 rounded-2xl border border-dashed border-gray-200">
-                    <p class="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">2. Select weeks for <span id="active-day-label" class="text-blue-600">...</span></p>
-                    <div class="flex justify-between items-center">
-                        <div id="week-bubbles" class="flex gap-2"></div>
-                        <button onclick="toggleAllWeeks()" class="text-xs font-bold text-gray-400 hover:text-black">Select All</button>
+            <div id="w-step2" class="wizard-step">
+                <div class="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
+                    <div class="flex-grow overflow-y-auto pr-2">
+                        <h2 id="t-weeklyHols" class="text-lg font-extrabold mb-1">Weekly Holidays</h2>
+                        <div id="weekend-controls" class="space-y-1 mt-4"></div>
+                    </div>
+                    <div class="w-full lg:w-72 bg-gray-50 p-4 rounded-2xl flex flex-col">
+                        <p class="text-[10px] font-black uppercase text-gray-400 mb-4">Preview: March 2026</p>
+                        <div id="miniGrid" class="grid grid-cols-7 gap-1 text-center"></div>
+                        <div class="mt-auto pt-4 border-t">
+                            <button onclick="wizardNext()" class="z-btn-main" id="t-btnNext">Next</button>
+                        </div>
                     </div>
                 </div>
-
-                <div class="mt-12 space-y-3 pb-24 lg:pb-0">
-                    <button onclick="openPreview()" class="z-btn-outline gap-2 border-blue-100 bg-blue-50 text-blue-600"><span>📅</span> Live Preview</button>
-                    <button onclick="wizardNext()" id="t-btnNext" class="z-btn-main shadow-lg">Next Step</button>
-                </div>
             </div>
 
-            <!-- Step 3: Nationals -->
-            <div id="w-step3" class="wizard-step w-full max-w-lg">
-                <div class="mb-6"><h2 id="t-natHols" class="text-2xl font-extrabold mb-2">National Holidays</h2><p id="t-natHolsSub" class="text-gray-500 font-medium">Verify these upcoming holidays.</p></div>
-                <div id="nat-checklist" class="space-y-3 mb-24"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto"><button onclick="finishWizard()" id="t-btnFinish" class="z-btn-main">Complete Setup</button></div>
+            <div id="w-step3" class="wizard-step items-center">
+                <div class="w-full max-w-sm">
+                    <h2 id="t-natHols" class="text-xl font-extrabold mb-1">National Holidays</h2>
+                    <div id="nat-checklist" class="space-y-3 my-8"></div>
+                    <button onclick="finishWizard()" class="z-btn-main" id="t-btnFinish">Go to Dashboard</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="mainContent" class="desktop-main flex-grow overflow-hidden hidden">
-        <aside class="bg-white border-r p-8 hidden lg:flex flex-col">
-            <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-12">
-            <nav class="space-y-3">
+    <!-- MAIN APP -->
+    <div id="mainContent" class="flex-grow flex flex-col lg:flex-row overflow-hidden hidden">
+        <aside class="w-64 bg-white border-r p-6 hidden lg:flex flex-col">
+            <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-10">
+            <nav class="space-y-2">
                 <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-4 rounded-xl font-extrabold bg-[#1C1C1C] text-white"><span>📷</span> <span>Attendance</span></button>
                 <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-4 rounded-xl font-bold text-gray-400 hover:bg-gray-50"><span>📅</span> <span>Calendar</span></button>
             </nav>
         </aside>
 
-        <main class="flex flex-col bg-[#FDFDFD] overflow-hidden">
+        <main class="flex-grow flex flex-col bg-[#FDFDFD] overflow-hidden">
             <header class="p-4 border-b flex justify-between items-center bg-white px-6">
-                <h2 id="view-header" class="text-xl font-extrabold">Attendance</h2>
-                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-4 py-2 font-bold text-sm outline-none">
-                    <option value="en">English</option>
-                    <option value="hi">हिन्दी</option>
+                <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-6 lg:hidden">
+                <h2 id="view-header" class="text-lg font-extrabold">Attendance</h2>
+                <select onchange="updateLang(this.value)" class="bg-gray-100 rounded-xl px-3 py-2 font-bold text-xs outline-none">
+                    <option value="en">English</option><option value="hi">हिन्दी</option>
                 </select>
             </header>
 
-            <div class="flex-grow p-4 lg:p-8 overflow-y-auto">
+            <div class="flex-grow p-4 lg:p-10 overflow-y-auto">
                 <!-- SCANNER VIEW -->
-                <div id="view-scan" class="h-full flex flex-col items-center justify-center space-y-6">
-                    <div id="scanner-frame" class="w-full max-w-sm aspect-square bg-gray-900 rounded-[48px] relative overflow-hidden flex items-center justify-center border-[12px] border-gray-800 shadow-2xl">
-                        <div id="scanner-line" class="absolute w-full h-1 bg-green-500 top-0 hidden animate-[bounce_3s_infinite]"></div>
-                        <p id="scanner-status" class="text-white/20 font-black text-xs tracking-widest uppercase">Scanner Offline</p>
+                <div id="view-scan" class="h-full flex flex-col items-center justify-center space-y-8">
+                    <div class="w-full max-w-sm aspect-square bg-gray-900 rounded-[48px] relative overflow-hidden flex items-center justify-center border-[10px] border-gray-800 shadow-2xl">
+                        <div class="absolute w-full h-1 bg-green-500 top-0 animate-[bounce_3s_infinite]"></div>
+                        <p class="text-white/20 font-black text-[10px] tracking-widest uppercase">Scanner Active</p>
                     </div>
-                    
-                    <button id="attendance-cta" onclick="toggleAttendance()" class="w-full max-w-sm z-btn-main text-xl h-20 shadow-xl">
-                        Start Meal Session
-                    </button>
-
-                    <button onclick="markEmergencyTomorrow()" class="w-full max-w-sm bg-white p-5 rounded-2xl flex items-center gap-5 border-l-8 border-red-500 shadow-sm">
-                        <span class="text-3xl">🚨</span><div class="text-left"><p class="font-black text-red-600 uppercase text-[10px]">Instant Update</p><p class="font-extrabold">Closed Tomorrow</p></div>
-                    </button>
                 </div>
 
-                <!-- CALENDAR VIEW -->
-                <div id="view-cal" class="hidden max-w-2xl mx-auto flex flex-col">
-                    <div class="z-card p-6 mb-6">
-                        <h3 class="text-2xl font-extrabold mb-8 text-center">March 2026</h3>
-                        <div class="grid grid-cols-7 text-center font-bold text-gray-400 text-xs mb-4"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
-                        <div id="mainGrid" class="grid grid-cols-7 gap-y-4"></div>
+                <!-- CALENDAR VIEW (Matches Screenshot) -->
+                <div id="view-cal" class="hidden max-w-3xl mx-auto flex flex-col">
+                    <div class="z-card p-10 bg-white">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="text-3xl font-extrabold text-[#1c1c1c]">March 2026</h3>
+                            <div class="flex gap-4 font-bold text-gray-300">
+                                <span>❮</span><span>❯</span>
+                            </div>
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="flex flex-wrap gap-x-8 gap-y-4 mb-8 text-[10px] font-black uppercase text-gray-500">
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-nat"></div> <span>National</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-wkd"></div> <span>Weekly Off</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-sch"></div> <span>Holiday</span></div>
+                            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full day-emg"></div> <span>Closed</span></div>
+                        </div>
+
+                        <!-- CTA RESTORED -->
+                        <button id="rangeToggle" onclick="toggleRangeMode()" class="range-cta mb-10">
+                            <span class="range-dot"></span>
+                            <span id="t-lRange">Tap Start & End Dates (For Vacations)</span>
+                        </button>
+
+                        <div class="grid grid-cols-7 text-center font-bold text-gray-400 text-xs mb-4">
+                            <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+                        </div>
+                        <div id="mainGrid" class="grid grid-cols-7 gap-y-6"></div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <aside class="bg-white border-l p-8 hidden lg:flex flex-col justify-center items-center">
-            <div class="bg-black text-white p-8 rounded-[40px] shadow-2xl w-full text-center">
-                <h4 id="mealForecast" class="text-5xl font-black mb-2">0</h4>
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Projected Meals</p>
+        <!-- Sidebar Stats -->
+        <aside class="w-72 bg-white border-l p-8 hidden lg:flex flex-col justify-center text-center">
+            <div class="bg-black text-white p-8 rounded-[36px] shadow-xl">
+                <h4 id="mealForecast" class="text-4xl font-black mb-1">0</h4>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Expected Meals</p>
+                <button onclick="alert('Data Synced!')" class="z-btn-main h-[44px] text-xs mt-8">Sync Cloud</button>
             </div>
         </aside>
     </div>
 
-    <!-- ACTION SHEET / PREVIEW MODAL -->
+    <!-- ACTION SHEET -->
     <div id="sheetOverlay" onclick="closeSheet()" class="fixed inset-0 bg-black/40 z-[400] hidden backdrop-blur-sm"></div>
-    <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[32px] p-8 pb-12 shadow-2xl">
-        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-8"></div>
-        <div id="sheetContent" class="w-full max-w-sm mx-auto"></div>
+    <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[32px] p-8 pb-12 shadow-2xl flex flex-col items-center">
+        <div class="w-10 h-1 bg-gray-200 rounded-full mb-6"></div>
+        <div id="sheetContent" class="w-full max-w-sm"></div>
     </div>
 
     <script>
         const i18n = {
-            en: { days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], daysShort: ["S","M","T","W","T","F","S"], nats: ["Holi", "Eid"] },
-            hi: { days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], daysShort: ["र","सो","मं","बु","गु","शु","श"], nats: ["होली", "ईद"] }
+            en: {
+                loginTitle: "Partner Portal", welcome: "Hello, Raghav!", welcomeSub: "Verify your March 2026 schedule for accurate meals.", btnBack: "Back",
+                weeklyHols: "Weekly Holidays", btnNext: "Next", natHols: "National Holidays", btnFinish: "Finish Setup",
+                navAttendance: "Attendance", navCalendar: "Calendar", lRange: "Tap Start & End Dates (For Vacations)",
+                actTitle: "Add Holiday", actSave: "Save Holiday", actRemove: "Remove Holiday",
+                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], nats: ["Holi", "Eid"]
+            },
+            hi: {
+                loginTitle: "पार्टनर पोर्टल", welcome: "नमस्ते, राघव!", welcomeSub: "भोजन के पूर्वानुमान के लिए मार्च शिड्यूल सेट करें।", btnBack: "पीछे",
+                weeklyHols: "साप्ताहिक छुट्टियां", btnNext: "आगे", natHols: "राष्ट्रीय छुट्टियां", btnFinish: "डैशबोर्ड पर जाएं",
+                navAttendance: "उपस्थिति", navCalendar: "कैलेंडर", lRange: "छुट्टी मोड (शुरूआत और अंत दबाएं)",
+                actTitle: "छुट्टी जोड़ें", actSave: "सेव करें", actRemove: "छुट्टी हटाएं",
+                days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"], nats: ["होली", "ईद"]
+            }
         };
 
-        let app = {
-            lang: 'en', wizardStep: 1, activeDayIdx: null,
-            isAttendanceActive: false,
-            weekendConfig: {}, // Format: { 0: [1,2,3,4,5] } Sunday all weeks
-            holidayData: {}, activeNationals: [0, 1], studentCount: 450
+        let app = { 
+            lang: 'en', view: 'scan', studentCount: 450, rangeMode: false, rangeStart: null, 
+            wizardStep: 1, holidayData: {}, weekendConfig: { 0: [1,2,3,4,5] }, activeNationals: [0, 1] 
         };
 
-        // 1. LOGIN & NAVIGATION
-        function checkLogin() {
-            document.getElementById('loginGate').classList.add('hidden');
-            document.getElementById('setupWizard').classList.remove('hidden');
-            renderWizardDays();
+        function checkLogin() { 
+            if(document.getElementById('email').value === 'raghav.ch2003@gmail.com' && document.getElementById('password').value === '12345') { 
+                document.getElementById('loginGate').classList.add('hidden'); 
+                document.getElementById('setupWizard').classList.remove('hidden'); 
+                renderWizard(); 
+            } 
         }
-
-        function wizardNext() {
-            if(app.wizardStep < 3) {
-                document.getElementById(`w-step${app.wizardStep}`).classList.remove('active');
-                app.wizardStep++;
-                document.getElementById(`w-step${app.wizardStep}`).classList.add('active');
-                if(app.wizardStep === 3) renderNatList();
-                document.getElementById('w-back').style.opacity = "1";
-                document.getElementById('w-back').style.pointerEvents = "auto";
-            }
+        function wizardNext() { 
+            if(app.wizardStep < 3) { 
+                document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); 
+                app.wizardStep++; 
+                document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); 
+                if(app.wizardStep === 3) renderNatChecklist(); 
+                document.getElementById('w-back').style.opacity = "1"; document.getElementById('w-back').style.pointerEvents = "auto"; 
+            } 
         }
-
-        function wizardBack() {
-            if(app.wizardStep > 1) {
-                document.getElementById(`w-step${app.wizardStep}`).classList.remove('active');
-                app.wizardStep--;
-                document.getElementById(`w-step${app.wizardStep}`).classList.add('active');
-                if(app.wizardStep === 1) {
-                    document.getElementById('w-back').style.opacity = "0";
-                    document.getElementById('w-back').style.pointerEvents = "none";
-                }
-            }
+        function wizardBack() { 
+            if(app.wizardStep > 1) { 
+                document.getElementById(`w-step${app.wizardStep}`).classList.remove('active'); 
+                app.wizardStep--; 
+                document.getElementById(`w-step${app.wizardStep}`).classList.add('active'); 
+                if(app.wizardStep === 1) { document.getElementById('w-back').style.opacity = "0"; document.getElementById('w-back').style.pointerEvents = "none"; } 
+            } 
         }
+        function finishWizard() { document.getElementById('setupWizard').classList.add('hidden'); document.getElementById('mainContent').classList.remove('hidden'); renderCalendar(); }
 
-        function finishWizard() {
-            document.getElementById('setupWizard').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            renderCalendar();
-        }
-
-        function setView(v) {
-            document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan');
-            document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal');
-            document.getElementById('view-header').innerText = v === 'scan' ? 'Attendance' : 'Calendar';
-        }
-
-        // 2. ATTENDANCE START/END LOGIC
-        function toggleAttendance() {
-            app.isAttendanceActive = !app.isAttendanceActive;
-            const btn = document.getElementById('attendance-cta');
-            const scannerLine = document.getElementById('scanner-line');
-            const scannerStatus = document.getElementById('scanner-status');
-
-            if(app.isAttendanceActive) {
-                btn.innerText = "End Meal Session";
-                btn.classList.add('z-btn-green');
-                scannerLine.classList.remove('hidden');
-                scannerStatus.innerText = "Scanner Active";
-                scannerStatus.classList.replace('text-white/20', 'text-green-500');
-            } else {
-                btn.innerText = "Start Meal Session";
-                btn.classList.remove('z-btn-green');
-                scannerLine.classList.add('hidden');
-                scannerStatus.innerText = "Scanner Offline";
-                scannerStatus.classList.replace('text-green-500', 'text-white/20');
-            }
-        }
-
-        // 3. WIZARD - HOLIDAY LOGIC
-        function renderWizardDays() {
-            const grid = document.getElementById('wizard-day-grid');
-            grid.innerHTML = '';
-            i18n[app.lang].daysShort.forEach((d, idx) => {
+        function renderWizard() {
+            const container = document.getElementById('weekend-controls'); container.innerHTML = '';
+            i18n[app.lang].days.forEach((day, idx) => {
                 const config = app.weekendConfig[idx] || [];
-                const isSelected = app.activeDayIdx === idx;
-                grid.innerHTML += `
-                    <div onclick="selectDayInWizard(${idx})" class="day-box ${isSelected?'selected':''} ${config.length>0?'has-config':''}">
-                        <span class="text-[10px] font-black opacity-40">${d}</span>
-                        <span class="font-bold text-lg">${config.length}</span>
-                    </div>
-                `;
+                container.innerHTML += `<div class="wkd-row"><span class="text-xs font-bold ${config.length>0?'text-red-500':''}">${day}</span><div class="flex gap-1">${[1,2,3,4,5].map(n => `<button onclick="toggleWeekNum(${idx}, ${n})" class="num-btn ${config.includes(n)?'active':''}">${n}</button>`).join('')}</div></div>`;
             });
-            renderWeekBubbles();
+            renderCalendar(true); 
         }
 
-        function selectDayInWizard(idx) {
-            app.activeDayIdx = idx;
-            document.getElementById('week-selector-area').classList.remove('invisible');
-            document.getElementById('active-day-label').innerText = i18n[app.lang].days[idx];
-            renderWizardDays();
+        function toggleWeekNum(dayIdx, num) {
+            if(!app.weekendConfig[dayIdx]) app.weekendConfig[dayIdx] = [];
+            if(app.weekendConfig[dayIdx].includes(num)) app.weekendConfig[dayIdx] = app.weekendConfig[dayIdx].filter(x => x !== num);
+            else app.weekendConfig[dayIdx].push(num);
+            if(app.weekendConfig[dayIdx].length === 0) delete app.weekendConfig[dayIdx];
+            renderWizard();
         }
 
-        function renderWeekBubbles() {
-            if(app.activeDayIdx === null) return;
-            const container = document.getElementById('week-bubbles');
-            container.innerHTML = '';
-            const config = app.weekendConfig[app.activeDayIdx] || [];
-            [1,2,3,4,5].forEach(num => {
-                const isActive = config.includes(num);
-                container.innerHTML += `
-                    <button onclick="toggleWeekNum(${num})" class="week-btn ${isActive?'active':''}">
-                        ${num}
-                    </button>
-                `;
-            });
-        }
-
-        function toggleWeekNum(num) {
-            if(!app.weekendConfig[app.activeDayIdx]) app.weekendConfig[app.activeDayIdx] = [];
-            let list = app.weekendConfig[app.activeDayIdx];
-            if(list.includes(num)) app.weekendConfig[app.activeDayIdx] = list.filter(n => n !== num);
-            else app.weekendConfig[app.activeDayIdx].push(num);
-            renderWizardDays();
-        }
-
-        function toggleAllWeeks() {
-            const idx = app.activeDayIdx;
-            if((app.weekendConfig[idx] || []).length === 5) app.weekendConfig[idx] = [];
-            else app.weekendConfig[idx] = [1,2,3,4,5];
-            renderWizardDays();
-        }
-
-        function applyPreset(type) {
-            app.weekendConfig = {};
-            if(type === 'sun') app.weekendConfig[0] = [1,2,3,4,5];
-            if(type === 'ss') { app.weekendConfig[0] = [1,2,3,4,5]; app.weekendConfig[6] = [1,2,3,4,5]; }
-            if(type === 'altSat') app.weekendConfig[6] = [2,4];
-            renderWizardDays();
-        }
-
-        // 4. PREVIEW CALENDAR
-        function openPreview() {
-            const content = document.getElementById('sheetContent');
-            content.innerHTML = `
-                <h3 class="text-xl font-extrabold mb-6 text-center">March 2026 Preview</h3>
-                <div class="grid grid-cols-7 gap-y-2 text-center text-[10px] font-bold text-gray-300 mb-2">
-                    <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
-                </div>
-                <div id="mini-preview-grid" class="grid grid-cols-7 gap-1 text-xs"></div>
-                <button onclick="closeSheet()" class="z-btn-main mt-8">Confirm Schedule</button>
-            `;
-            const grid = document.getElementById('mini-preview-grid');
-            const first = new Date(2026, 2, 1).getDay();
-            for(let p=0; p<first; p++) grid.innerHTML += '<div></div>';
-            for(let d=1; d<=31; d++) {
-                const status = getDayStatus(d);
-                grid.innerHTML += `<div class="aspect-square flex items-center justify-center rounded-lg day-${status.type}">${d}</div>`;
-            }
-            document.getElementById('sheetOverlay').classList.remove('hidden');
-            document.getElementById('actionSheet').classList.add('open');
-        }
-
-        // 5. CORE LOGIC (CALENDAR & DASHBOARD)
-        function renderCalendar() {
-            const grid = document.getElementById('mainGrid'); 
-            if(!grid) return; grid.innerHTML = '';
-            const first = new Date(2026, 2, 1).getDay();
-            for(let p=0; p<first; p++) grid.innerHTML += '<div></div>';
-            let holidays = 0;
+        function renderCalendar(isMini = false) {
+            const grid = document.getElementById(isMini ? 'miniGrid' : 'mainGrid'); grid.innerHTML = '';
+            const first = new Date(2026, 2, 1).getDay(); for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
+            let hCount = 0;
             for(let d=1; d<=31; d++) {
                 const status = getDayStatus(d);
                 const day = document.createElement('div');
-                day.className = `day-circle day-${status.type} ${status.name?'has-name':''}`;
-                day.innerText = d;
-                grid.appendChild(day);
-                if(status.type !== 'none') holidays++;
+                day.className = `day-circle day-${status.type} ${status.name ? 'has-name' : ''} ${isMini ? 'scale-[0.7]' : ''}`;
+                if(app.rangeMode && app.rangeStart === d) day.classList.add('ring-2', 'ring-black', 'ring-offset-2');
+                day.innerText = d; 
+                if(!isMini) day.onclick = () => onDayClick(d);
+                grid.appendChild(day); if(status.type !== 'none') hCount++;
             }
-            document.getElementById('mealForecast').innerText = ((31 - holidays) * app.studentCount).toLocaleString();
+            document.getElementById('mealForecast').innerText = ((31 - hCount) * app.studentCount).toLocaleString();
         }
 
         function getDayStatus(d) {
             if(app.holidayData[d]) return app.holidayData[d];
             if(app.activeNationals.includes(0) && d === 14) return { type: 'nat', name: 'Holi' };
             if(app.activeNationals.includes(1) && d === 31) return { type: 'nat', name: 'Eid' };
-            const date = new Date(2026, 2, d);
-            const weekNum = Math.floor((d - 1) / 7) + 1;
-            if((app.weekendConfig[date.getDay()] || []).includes(weekNum)) return { type: 'wkd', name: 'Off' };
+            const date = new Date(2026, 2, d); const occ = Math.floor((d-1)/7)+1;
+            if(app.weekendConfig[date.getDay()]?.includes(occ)) return { type: 'wkd', name: 'Weekly Off' };
             return { type: 'none', name: '' };
         }
 
-        function renderNatList() {
+        function onDayClick(d) {
+            app.activeDay = d; const status = getDayStatus(d);
+            if(!app.rangeMode) {
+                openSheet(status.type === 'none' ? 'add' : 'view', status);
+            } else {
+                if(app.rangeStart === null) {
+                    app.rangeStart = d;
+                } else {
+                    const start = Math.min(app.rangeStart, d);
+                    const end = Math.max(app.rangeStart, d);
+                    openSheet('addRange', { s: start, e: end });
+                }
+                renderCalendar();
+            }
+        }
+
+        function toggleRangeMode() { 
+            app.rangeMode = !app.rangeMode; 
+            app.rangeStart = null;
+            document.getElementById('rangeToggle').classList.toggle('active');
+            renderCalendar();
+        }
+
+        function openSheet(mode, data) {
+            const t = i18n[app.lang]; const content = document.getElementById('sheetContent');
+            if(mode === 'add') content.innerHTML = `<h3 class="text-xl font-extrabold mb-4">${t.actTitle} (Mar ${app.activeDay})</h3><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-4" placeholder="e.g. Annual Day"><button onclick="saveHoliday()" class="z-btn-main">${t.actSave}</button>`;
+            else if(mode === 'view') content.innerHTML = `<div class="text-center mb-6"><h3 class="text-2xl font-extrabold">${data.name}</h3></div><button onclick="removeHoliday()" class="w-full py-4 text-red-600 font-extrabold border-2 border-red-50 rounded-xl mb-2">${t.actRemove}</button>`;
+            else if(mode === 'addRange') content.innerHTML = `<h3 class="text-xl font-extrabold mb-2">Vacation Name</h3><p class="text-xs text-gray-500 mb-4">From ${data.s} to ${data.e} March</p><input id="hName" type="text" class="w-full p-4 border rounded-xl mb-4" placeholder="e.g. Spring Break"><button onclick="saveRange(${data.s}, ${data.e})" class="z-btn-main">Mark Vacation</button>`;
+            document.getElementById('sheetOverlay').classList.remove('hidden'); document.getElementById('actionSheet').classList.add('open');
+        }
+
+        function saveHoliday() { app.holidayData[app.activeDay] = { type: 'sch', name: document.getElementById('hName').value || 'Holiday' }; closeSheet(); renderCalendar(); }
+        function removeHoliday() { delete app.holidayData[app.activeDay]; closeSheet(); renderCalendar(); }
+        function saveRange(s, e) { const name = document.getElementById('hName').value || 'Vacation'; for(let i=s; i<=e; i++) app.holidayData[i] = { type: 'sch', name: name }; app.rangeStart = null; closeSheet(); renderCalendar(); }
+        function closeSheet() { document.getElementById('sheetOverlay').classList.add('hidden'); document.getElementById('actionSheet').classList.remove('open'); app.rangeStart = null; renderCalendar(); }
+        
+        function updateLang(l) {
+            app.lang = l; const t = i18n[l];
+            document.getElementById('t-lRange').innerText = t.lRange;
+            renderWizard(); renderCalendar();
+        }
+
+        function setView(v) { 
+            app.view = v; document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan'); document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); 
+            document.getElementById('view-header').innerText = v === 'scan' ? i18n[app.lang].navAttendance : i18n[app.lang].navCalendar;
+        }
+
+        function renderNatChecklist() {
             const list = document.getElementById('nat-checklist'); list.innerHTML = '';
             i18n[app.lang].nats.forEach((h, idx) => {
                 const checked = app.activeNationals.includes(idx) ? 'checked' : '';
-                list.innerHTML += `<div class="bg-gray-50 p-5 rounded-2xl border border-gray-100 flex justify-between items-center"><span class="font-extrabold">${h}</span><input type="checkbox" onchange="toggleNat(${idx})" ${checked} class="w-6 h-6 accent-red-500"></div>`;
+                list.innerHTML += `<div class="bg-gray-50 p-5 rounded-2xl border flex justify-between items-center"><span class="font-extrabold text-gray-700">${h}</span><input type="checkbox" onchange="toggleNat(${idx})" ${checked} class="w-6 h-6 accent-red-500"></div>`;
             });
         }
+        function toggleNat(idx) { if(app.activeNationals.includes(idx)) app.activeNationals = app.activeNationals.filter(i => i !== idx); else app.activeNationals.push(idx); }
 
-        function toggleNat(idx) {
-            if(app.activeNationals.includes(idx)) app.activeNationals = app.activeNationals.filter(i => i !== idx);
-            else app.activeNationals.push(idx);
-        }
-
-        function closeSheet() {
-            document.getElementById('sheetOverlay').classList.add('hidden');
-            document.getElementById('actionSheet').classList.remove('open');
-        }
-
-        function markEmergencyTomorrow() {
-            app.holidayData[4] = { type: 'emg', name: 'Closed' };
-            renderCalendar();
-            alert("Updated: Center marked closed for tomorrow.");
-        }
+        updateLang('en');
     </script>
 </body>
 </html>
