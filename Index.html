@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feeding India | Easy School Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; overflow: hidden; }
+        
+        /* High Contrast Holiday Colors */
+        .day-nat { background: #f97316 !important; color: white !important; }
+        .day-wkd { background: #3b82f6 !important; color: white !important; }
+        .day-sch { background: #fbbf24 !important; color: black !important; }
+        .day-emg { background: #ef4444 !important; color: white !important; }
+        .day-none { background: white; border: 2px solid #f1f5f9; color: #475569; }
+
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .calendar-grid { display: grid; grid-template-cols: repeat(7, 1fr); gap: 10px; }
+        .day-box { aspect-ratio: 1/1; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; transition: 0.1s; font-size: 1.2rem; }
+        
+        .wkd-btn.active { background: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
+        .num-btn.active { background: #0f172a; color: white; }
+
+        @media (min-width: 1024px) {
+            .desktop-main { display: grid; grid-template-columns: 300px 1fr 350px; height: 100vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="setupWizard" class="fixed inset-0 bg-white z-[100] flex items-center justify-center p-4">
+        <div class="max-w-xl w-full">
+            <div id="w-step1" class="wizard-step active">
+                <div class="mb-8 text-center">
+                    <h2 id="ws-title" class="text-3xl font-black text-slate-900 mb-2">Weekly Holidays</h2>
+                    <p id="ws-sub" class="text-slate-500 font-bold">Which days is your school closed?</p>
+                </div>
+
+                <div id="weekend-controls" class="space-y-4 mb-10">
+                    </div>
+
+                <button onclick="finishSetup()" class="w-full bg-green-600 text-white py-6 rounded-3xl font-black uppercase text-lg shadow-xl hover:bg-green-700 active:scale-95 transition-all">
+                    SAVE & START
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="desktop-main">
+        
+        <aside class="bg-white border-r p-8 hidden lg:flex flex-col">
+            <div class="flex items-center gap-3 mb-12">
+                <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-black">FI</div>
+                <h1 class="font-black text-xl tracking-tight">Feeding India</h1>
+            </div>
+
+            <nav class="space-y-4">
+                <button id="nav-scan" onclick="setView('scan')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold bg-slate-900 text-white shadow-xl">
+                    <span class="text-2xl">📸</span> <span id="n-scan">Attendance</span>
+                </button>
+                <button id="nav-cal" onclick="setView('cal')" class="w-full flex items-center gap-4 p-5 rounded-3xl font-bold text-slate-400 hover:bg-slate-50">
+                    <span class="text-2xl">📅</span> <span id="n-cal">Calendar</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="flex flex-col bg-white">
+            <header class="p-6 border-b flex justify-between items-center bg-white/50 backdrop-blur-md">
+                <h2 id="view-header" class="text-2xl font-black text-slate-900">Attendance</h2>
+                <select onchange="updateLang(this.value)" class="bg-slate-100 rounded-2xl px-4 py-2 font-bold outline-none border-2 border-transparent focus:border-slate-900">
+                    <option value="en">English</option>
+                    <option value="hi">हिन्दी</option>
+                    <option value="mr">मराठी</option>
+                </select>
+            </header>
+
+            <div class="flex-grow p-6 overflow-y-auto">
+                
+                <div id="view-scan" class="h-full flex flex-col items-center justify-center space-y-8">
+                    <div class="w-full max-w-lg aspect-square bg-slate-900 rounded-[60px] relative overflow-hidden flex items-center justify-center border-[12px] border-slate-800 shadow-2xl">
+                        <div class="absolute w-full h-1.5 bg-green-500 top-0 animate-[bounce_3s_infinite] shadow-[0_0_30px_#22c55e]"></div>
+                        <div class="text-center opacity-30">
+                            <div class="w-32 h-40 border-4 border-white rounded-full mx-auto mb-4"></div>
+                            <p class="text-white text-[10px] font-black uppercase tracking-[0.4em]">Face Detection Active</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-lg">
+                        <div class="bg-slate-50 p-8 rounded-[40px] text-center border-2 border-slate-100">
+                            <p class="text-5xl font-black text-slate-900">412</p>
+                            <p id="stat-p" class="text-xs font-bold text-slate-400 uppercase mt-2">Present</p>
+                        </div>
+                        <div class="bg-slate-50 p-8 rounded-[40px] text-center border-2 border-slate-100">
+                            <p class="text-5xl font-black text-slate-300">450</p>
+                            <p id="stat-t" class="text-xs font-bold text-slate-400 uppercase mt-2">Total</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-cal" class="hidden">
+                    <div class="flex justify-between items-center mb-6 bg-slate-50 p-3 rounded-3xl">
+                        <button onclick="moveMonth(-1)" class="w-14 h-14 bg-white rounded-2xl shadow-md font-black text-2xl">←</button>
+                        <h3 id="month-display" class="text-2xl font-black">March 2026</h3>
+                        <button onclick="moveMonth(1)" class="w-14 h-14 bg-white rounded-2xl shadow-md font-black text-2xl">→</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8 bg-white p-4 rounded-3xl border-2 border-slate-100">
+                        <div class="flex items-center gap-2 font-bold text-xs"><div class="w-5 h-5 rounded-lg day-nat"></div><span id="lg-n">National</span></div>
+                        <div class="flex items-center gap-2 font-bold text-xs"><div class="w-5 h-5 rounded-lg day-wkd"></div><span id="lg-w">Weekend</span></div>
+                        <div class="flex items-center gap-2 font-bold text-xs"><div class="w-5 h-5 rounded-lg day-sch"></div><span id="lg-s">Holiday</span></div>
+                        <div class="flex items-center gap-2 font-bold text-xs"><div class="w-5 h-5 rounded-lg day-emg"></div><span id="lg-e">Closed</span></div>
+                    </div>
+
+                    <div class="calendar-grid text-center font-black text-slate-300 uppercase mb-4 text-xs">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+                    <div id="mainGrid" class="calendar-grid"></div>
+
+                    <button id="rangeToggle" onclick="toggleRangeMode()" class="w-full mt-8 p-5 rounded-3xl bg-white border-4 border-slate-200 font-black flex items-center justify-center gap-4 transition-all">
+                        <span id="range-dot" class="w-4 h-4 rounded-full bg-slate-200"></span>
+                        <span id="l-range">TAP START & END DATES (FOR SUMMER/WINTER BREAK)</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <aside class="bg-slate-50 border-l p-8 hidden lg:flex flex-col">
+            <div class="bg-slate-900 rounded-[50px] p-10 text-white shadow-2xl mb-8 relative overflow-hidden">
+                <h4 id="mealForecast" class="text-6xl font-black text-orange-400 mb-2">0</h4>
+                <p id="l-for" class="text-xs font-bold text-white/40 uppercase tracking-widest">Meals for Month</p>
+                <button onclick="alert('Sent to Feeding India!')" class="w-full mt-10 bg-white text-slate-900 py-5 rounded-3xl font-black uppercase text-sm tracking-widest active:scale-95 transition-all">Update Kitchen</button>
+            </div>
+
+            <div class="mt-auto">
+                <div class="bg-red-50 border-4 border-red-100 p-8 rounded-[50px] text-center">
+                    <p class="text-3xl mb-4">🚨</p>
+                    <p id="em-t" class="font-black text-red-600 text-xl leading-none mb-2">CLOSE TOMORROW?</p>
+                    <p id="em-s" class="text-red-400 text-xs font-bold mb-8">Stop food for the next day only.</p>
+                    <button onclick="setEmergencyTomorrow()" class="w-full bg-red-600 text-white py-5 rounded-3xl font-black uppercase text-sm shadow-xl shadow-red-200 active:scale-95 transition-all">Yes, Close Tomorrow</button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script>
+        const i18n = {
+            en: {
+                wsTitle: "School Holidays", wsSub: "Tap the days your school is closed every week",
+                nScan: "Attendance", nCal: "Calendar", vScan: "Attendance", vCal: "Holiday List",
+                range: "Tap Start & End (Vacations)", for: "Meals for Month", emT: "CLOSE TOMORROW?", emS: "Stop food for tomorrow only.",
+                lgN: "National", lgW: "Weekly Off", lgS: "School Holiday", lgE: "Emergency",
+                days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            },
+            hi: {
+                wsTitle: "साप्ताहिक छुट्टियां", wsSub: "उन दिनों को चुनें जब स्कूल हर हफ्ते बंद रहता है",
+                nScan: "उपस्थिति", nCal: "कैलेंडर", vScan: "उपस्थिति", vCal: "छुट्टियों की सूची",
+                range: "लंबी छुट्टी (गर्मी/सर्दी) सेट करें", for: "महीने का भोजन", emT: "क्या कल छुट्टी है?", emS: "केवल कल का खाना बनाना रोकें।",
+                lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "स्कूल छुट्टी", lgE: "आपातकालीन",
+                days: ["रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"],
+                months: ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"]
+            },
+            mr: {
+                wsTitle: "साप्ताहिक सुट्ट्या", wsSub: "शाळा दर आठवड्याला ज्या दिवशी बंद असते ते निवडा",
+                nScan: "हजेरी", nCal: "कॅलेंडर", vScan: "हजेरी", vCal: "सुट्ट्यांची यादी",
+                range: "मोठ्या सुट्ट्या (उन्हाळा/हिवाळा)", for: "महिन्याचे जेवण", emT: "उद्या सुट्टी आहे का?", emS: "फक्त उद्याचे जेवण थांबवा.",
+                lgN: "राष्ट्रीय", lgW: "साप्ताहिक", lgS: "शाळा सुट्टी", lgE: "आणीबाणी",
+                days: ["रविवार", "सोमवार", "मंगळवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"],
+                months: ["जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"]
+            }
+        };
+
+        let app = {
+            lang: 'en', view: 'scan', year: 2026, month: 2, 
+            studentCount: 450, rangeMode: false, rangeStart: null,
+            holidayData: {}, weekendConfig: { 0: [1,2,3,4,5] }
+        };
+
+        function updateLang(l) {
+            app.lang = l;
+            const t = i18n[l];
+            document.getElementById('ws-title').innerText = t.wsTitle;
+            document.getElementById('ws-sub').innerText = t.wsSub;
+            document.getElementById('n-scan').innerText = t.nScan;
+            document.getElementById('n-cal').innerText = t.nCal;
+            document.getElementById('l-range').innerText = t.range;
+            document.getElementById('l-for').innerText = t.for;
+            document.getElementById('em-t').innerText = t.emT;
+            document.getElementById('em-s').innerText = t.emS;
+            document.getElementById('lg-n').innerText = t.lgN;
+            document.getElementById('lg-w').innerText = t.lgW;
+            document.getElementById('lg-s').innerText = t.lgS;
+            document.getElementById('lg-e').innerText = t.lgE;
+            setView(app.view);
+            renderWizard();
+            renderCalendar();
+        }
+
+        function renderWizard() {
+            const container = document.getElementById('weekend-controls');
+            container.innerHTML = '';
+            i18n[app.lang].days.forEach((day, idx) => {
+                const isActive = !!app.weekendConfig[idx];
+                container.innerHTML += `
+                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-3xl border-2 border-slate-100">
+                        <button onclick="toggleDay(${idx})" class="wkd-btn px-6 py-4 rounded-2xl border-2 border-slate-200 font-bold transition-all ${isActive?'active':''}">${day}</button>
+                        <div class="flex gap-1">
+                            ${[1, 2, 3, 4, 5].map(n => `
+                                <button onclick="toggleWeekNum(${idx}, ${n})" class="num-btn w-10 h-10 rounded-xl border-2 border-slate-200 text-xs font-black ${app.weekendConfig[idx]?.includes(n)?'active':''}">${n}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleDay(idx) {
+            if(app.weekendConfig[idx]) delete app.weekendConfig[idx];
+            else app.weekendConfig[idx] = [1,2,3,4,5];
+            renderWizard();
+        }
+
+        function toggleWeekNum(dayIdx, num) {
+            if(!app.weekendConfig[dayIdx]) app.weekendConfig[dayIdx] = [];
+            if(app.weekendConfig[dayIdx].includes(num)) app.weekendConfig[dayIdx] = app.weekendConfig[dayIdx].filter(x => x !== num);
+            else app.weekendConfig[dayIdx].push(num);
+            renderWizard();
+        }
+
+        function finishSetup() { document.getElementById('setupWizard').classList.add('hidden'); renderCalendar(); }
+        function moveMonth(dir) { app.month += dir; if(app.month<0){app.month=11;app.year--} if(app.month>11){app.month=0;app.year++} renderCalendar(); }
+
+        function renderCalendar() {
+            const grid = document.getElementById('mainGrid'); grid.innerHTML = '';
+            const first = new Date(app.year, app.month, 1).getDay();
+            const days = new Date(app.year, app.month + 1, 0).getDate();
+            document.getElementById('month-display').innerText = `${i18n[app.lang].months[app.month]} ${app.year}`;
+            for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
+            let hCount = 0;
+            for(let d=1; d<=days; d++) {
+                const type = getDayStatus(d);
+                const day = document.createElement('div');
+                day.className = `day-box day-${type}`;
+                if(app.rangeMode && app.rangeStart === d) day.classList.add('ring-4', 'ring-slate-900', 'ring-offset-2');
+                day.innerText = d;
+                day.onclick = () => onDayClick(d);
+                grid.appendChild(day);
+                if(type !== 'none') hCount++;
+            }
+            document.getElementById('mealForecast').innerText = ((days - hCount) * app.studentCount).toLocaleString();
+        }
+
+        function getDayStatus(d) {
+            const key = `${app.month}-${app.year}`;
+            if(app.holidayData[key]?.[d]) return app.holidayData[key][d];
+            const date = new Date(app.year, app.month, d);
+            const dow = date.getDay();
+            const occurrence = Math.floor((d - 1) / 7) + 1;
+            if(app.weekendConfig[dow]?.includes(occurrence)) return 'wkd';
+            return 'none';
+        }
+
+        function onDayClick(d) {
+            const key = `${app.month}-${app.year}`;
+            if(!app.holidayData[key]) app.holidayData[key] = {};
+            if(!app.rangeMode) app.holidayData[key][d] = app.holidayData[key][d] === 'sch' ? 'none' : 'sch';
+            else {
+                if(app.rangeStart === null) app.rangeStart = d;
+                else {
+                    const s = Math.min(app.rangeStart, d); const e = Math.max(app.rangeStart, d);
+                    for(let i=s; i<=e; i++) app.holidayData[key][i] = 'sch';
+                    app.rangeStart = null;
+                }
+            }
+            renderCalendar();
+        }
+
+        function setEmergencyTomorrow() {
+            // Today is Mar 3. Tomorrow is Mar 4.
+            const tomorrow = new Date(2026, 2, 4); 
+            const key = `${tomorrow.getMonth()}-${tomorrow.getFullYear()}`;
+            if(!app.holidayData[key]) app.holidayData[key] = {};
+            app.holidayData[key][tomorrow.getDate()] = 'emg';
+            alert("Tomorrow marked CLOSED. Kitchen production stopped.");
+            renderCalendar();
+        }
+
+        function setView(v) {
+            app.view = v;
+            document.getElementById('view-scan').classList.toggle('hidden', v !== 'scan');
+            document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal');
+            document.getElementById('view-header').innerText = i18n[app.lang][v==='scan'?'vScan':'vCal'];
+            document.getElementById('nav-scan').className = `w-full flex items-center gap-4 p-5 rounded-3xl font-bold transition-all ${v==='scan'?'bg-slate-900 text-white shadow-xl':'text-slate-400'}`;
+            document.getElementById('nav-cal').className = `w-full flex items-center gap-4 p-5 rounded-3xl font-bold transition-all ${v==='cal'?'bg-slate-900 text-white shadow-xl':'text-slate-400'}`;
+        }
+
+        function toggleRangeMode() {
+            app.rangeMode = !app.rangeMode; app.rangeStart = null;
+            document.getElementById('range-dot').classList.toggle('bg-green-500', app.rangeMode);
+            document.getElementById('rangeToggle').classList.toggle('border-slate-900', app.rangeMode);
+            renderCalendar();
+        }
+
+        updateLang('en');
+    </script>
+</body>
+</html>
