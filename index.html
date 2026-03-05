@@ -26,12 +26,12 @@
         .z-card { background: white; border-radius: 32px; border: 1.5px solid #f0f0f0; box-shadow: 0 4px 25px rgba(0,0,0,0.03); }
 
         /* Quick Patterns */
-        .pat-btn { border: 1.5px solid #F0F0F0; padding: 12px 24px; border-radius: 100px; font-weight: 700; font-size: 14px; background: white; transition: 0.2s; }
+        .pat-btn { border: 1.5px solid #F0F0F0; padding: 10px 18px; border-radius: 100px; font-weight: 700; font-size: 13px; background: white; transition: 0.2s; white-space: nowrap; }
         .pat-btn.active { border-color: var(--z-red); color: var(--z-red); background: #FFF5F6; }
 
         /* Weekly Selection List */
-        .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #f2f2f2; }
-        .num-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e0e0e0; font-size: 12px; font-weight: 800; color: #1c1c1c; background: white; }
+        .wkd-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #f2f2f2; }
+        .num-btn { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid #e0e0e0; font-size: 12px; font-weight: 800; color: #1c1c1c; background: white; }
         .num-btn.active { background: #1c1c1c; color: white; border-color: #1c1c1c; }
 
         /* Vacation Pill */
@@ -50,7 +50,7 @@
         .wizard-step.active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #actionSheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); }
+        #actionSheet { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(100%); max-height: 85vh; overflow-y: auto; }
         #actionSheet.open { transform: translateY(0); }
 
         /* Sidebar/Menu Transition */
@@ -102,27 +102,33 @@
             <div class="w-10"></div>
         </header>
 
-        <div class="flex-grow p-6 overflow-y-auto">
+        <div class="flex-grow p-6 overflow-y-auto pb-32">
             <!-- Step 1: Weekly -->
             <div id="w-step1" class="wizard-step active max-w-2xl mx-auto py-4">
+                <div class="bg-blue-50 border border-blue-100 p-4 rounded-2xl mb-8 flex items-start gap-3">
+                    <span class="text-xl">ℹ️</span>
+                    <p class="text-blue-800 text-sm font-semibold leading-snug">Note: This setup is only required once at the start of the academic year.</p>
+                </div>
+
                 <h2 id="t-weeklyHols" class="text-4xl font-extrabold mb-2">Weekly Holidays</h2>
                 <p id="t-weeklyHolsSub" class="text-gray-500 text-lg mb-8">When is your center closed?</p>
 
                 <p id="t-quickPatterns" class="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Quick Patterns</p>
-                <div class="flex flex-wrap gap-3 mb-10">
+                <div class="flex flex-wrap gap-2 mb-10">
                     <button onclick="applyPattern('sun', this)" id="t-patSun" class="pat-btn">Every Sunday</button>
                     <button onclick="applyPattern('sat-sun', this)" id="t-patBoth" class="pat-btn">Sat & Sun</button>
-                    <button onclick="applyPattern('alt-sat', this)" id="t-patAlt" class="pat-btn">Alt. Saturdays</button>
+                    <button onclick="applyPattern('alt-sat-24', this)" id="t-patAlt24" class="pat-btn">Alt. Sat (2, 4)</button>
+                    <button onclick="applyPattern('alt-sat-135', this)" id="t-patAlt135" class="pat-btn">Alt. Sat (1, 3, 5)</button>
                     <button onclick="applyPattern('clear', this)" id="t-patReset" class="pat-btn text-red-500 border-red-50">Reset</button>
                 </div>
 
-                <div id="weekend-controls" class="space-y-1 mb-6"></div>
+                <div id="weekend-controls" class="space-y-1 mb-10"></div>
                 
-                <button onclick="openPreview()" id="t-btnPreview" class="w-full py-4 mb-24 text-gray-400 border-2 border-dashed border-gray-100 rounded-xl font-bold flex items-center justify-center gap-2">
-                    📅 Preview March Calendar
+                <button onclick="openPreview()" id="t-btnPreview" class="w-full py-5 text-gray-600 border-2 border-dashed border-gray-200 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 transition-all">
+                    <span>📅</span> <span id="t-btnPreviewTxt">Preview March Calendar</span>
                 </button>
 
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto">
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white border-t lg:relative lg:p-0 lg:border-0 lg:mt-auto lg:pt-10">
                     <button onclick="wizardNext()" id="t-btnContinue" class="z-btn-main">Continue</button>
                 </div>
             </div>
@@ -139,6 +145,7 @@
 
     <!-- 3. MAIN DASHBOARD -->
     <div id="mainContent" class="flex-grow flex flex-col lg:flex-row overflow-hidden hidden">
+        <!-- Desktop Sidebar -->
         <aside class="w-64 bg-white border-r p-8 hidden lg:flex flex-col">
             <img src="https://i.ibb.co/XfXfGZq/Feeding-India-Logo.png" class="h-10 mb-10">
             <nav class="space-y-2">
@@ -163,7 +170,7 @@
 
             <div class="flex-grow flex flex-col lg:flex-row p-4 lg:p-12 gap-10 overflow-y-auto">
                 <div class="flex-grow">
-                    <!-- SCANNER -->
+                    <!-- SCANNER VIEW -->
                     <div id="view-scan" class="h-full flex flex-col items-center justify-center space-y-8">
                         <div class="w-full max-w-sm aspect-square scanner-box flex items-center justify-center">
                             <div class="scan-line"></div>
@@ -176,7 +183,7 @@
                         </div>
                     </div>
 
-                    <!-- CALENDAR -->
+                    <!-- CALENDAR VIEW -->
                     <div id="view-cal" class="hidden max-w-3xl mx-auto flex flex-col">
                         <div class="z-card p-6 lg:p-10 bg-white">
                             <div class="flex items-center justify-between mb-8"><h3 id="t-monthYear" class="text-2xl lg:text-3xl font-extrabold text-[#1c1c1c]">March 2026</h3><div class="flex gap-4 font-bold text-gray-300"><span>❮</span><span>❯</span></div></div>
@@ -205,11 +212,11 @@
         </main>
     </div>
 
-    <!-- ACTION SHEET -->
+    <!-- ACTION SHEET (PREVIEWS & EDITING) -->
     <div id="sheetOverlay" onclick="closeSheet()" class="fixed inset-0 bg-black/40 z-[400] hidden backdrop-blur-sm"></div>
-    <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[40px] p-10 pb-12 shadow-2xl flex flex-col items-center">
+    <div id="actionSheet" class="fixed bottom-0 left-0 right-0 bg-white z-[401] rounded-t-[40px] p-8 pb-12 shadow-2xl flex flex-col items-center">
         <div class="w-12 h-1.5 bg-gray-200 rounded-full mb-8"></div>
-        <div id="sheetContent" class="w-full max-w-sm"></div>
+        <div id="sheetContent" class="w-full"></div>
     </div>
 
     <script>
@@ -217,8 +224,8 @@
             en: {
                 loginTitle: "Partner Login", btnLogin: "Login", btnBack: "Back",
                 weeklyHols: "Weekly Holidays", weeklyHolsSub: "When is your center closed?", quickPatterns: "Quick Patterns",
-                patSun: "Every Sunday", patBoth: "Sat & Sun", patAlt: "Alt. Saturdays", patReset: "Reset",
-                btnPreview: "📅 Preview March Calendar", btnContinue: "Continue",
+                patSun: "Every Sunday", patBoth: "Sat & Sun", patAlt24: "Alt. Sat (2, 4)", patAlt135: "Alt. Sat (1, 3, 5)", patReset: "Reset",
+                btnPreviewTxt: "Preview March Calendar", btnContinue: "Continue",
                 natHols: "National Holidays", natHolsSub: "Confirm regional holidays for March 2026.", btnFinish: "Finish & Dashboard",
                 navAttendance: "Attendance", navCalendar: "Calendar",
                 scannerActive: "SCANNER ACTIVE", btnEndMeal: "End Meal Session", updateTag: "Instant Update", closedTmr: "Closed Tomorrow",
@@ -230,8 +237,8 @@
             hi: {
                 loginTitle: "पार्टनर लॉगिन", btnLogin: "लॉगिन करें", btnBack: "पीछे",
                 weeklyHols: "साप्ताहिक छुट्टियां", weeklyHolsSub: "आपका सेंटर कब बंद रहता है?", quickPatterns: "क्विक पैटर्न्स",
-                patSun: "हर रविवार", patBoth: "शनि और रवि", patAlt: "वैकल्पिक शनिवार", patReset: "रीसेट",
-                btnPreview: "📅 मार्च कैलेंडर देखें", btnContinue: "आगे बढ़ें",
+                patSun: "हर रविवार", patBoth: "शनि और रवि", patAlt24: "शनि (2, 4)", patAlt135: "शनि (1, 3, 5)", patReset: "रीसेट",
+                btnPreviewTxt: "मार्च कैलेंडर देखें", btnContinue: "आगे बढ़ें",
                 natHols: "राष्ट्रीय छुट्टियां", natHolsSub: "मार्च 2026 के लिए क्षेत्रीय छुट्टियों की पुष्टि करें।", btnFinish: "पूरा करें",
                 navAttendance: "उपस्थिति", navCalendar: "कैलेंडर",
                 scannerActive: "स्कैनर सक्रिय है", btnEndMeal: "भोजन सत्र समाप्त करें", updateTag: "त्वरित अपडेट", closedTmr: "कल बंद है",
@@ -254,16 +261,12 @@
 
         function updateLang(l) {
             app.lang = l; const t = i18n[l];
-            const ids = ['loginTitle','btnLogin','btnBack','weeklyHols','weeklyHolsSub','quickPatterns','patSun','patBoth','patAlt','patReset','btnPreview','btnContinue','natHols','natHolsSub','btnFinish','scannerActive','btnEndMeal','updateTag','closedTmr','monthYear','legNat','legWkd','legSch','legForecast','rangeCta'];
+            const ids = ['loginTitle','btnLogin','btnBack','weeklyHols','weeklyHolsSub','quickPatterns','patSun','patBoth','patAlt24','patAlt135','patReset','btnPreviewTxt','btnContinue','natHols','natHolsSub','btnFinish','scannerActive','btnEndMeal','updateTag','closedTmr','monthYear','legNat','legWkd','legSch','legForecast','rangeCta'];
             ids.forEach(id => { const el = document.getElementById('t-'+id); if(el) el.innerText = t[id]; });
-            
-            // Handle shared classes for nav
             document.querySelectorAll('.t-navAttendance').forEach(el => el.innerText = t.navAttendance);
             document.querySelectorAll('.t-navCalendar').forEach(el => el.innerText = t.navCalendar);
-
             renderWizard(); renderCalendar();
-            if(app.view === 'scan') document.getElementById('view-header').innerText = t.navAttendance;
-            else document.getElementById('view-header').innerText = t.navCalendar;
+            document.getElementById('view-header').innerText = i18n[app.lang][app.view==='scan'?'navAttendance':'navCalendar'];
         }
 
         function checkLogin() { if(document.getElementById('email').value === 'raghav.ch2003@gmail.com' && document.getElementById('password').value === '12345') { document.getElementById('loginGate').classList.add('hidden'); document.getElementById('setupWizard').classList.remove('hidden'); renderWizard(); } }
@@ -275,7 +278,8 @@
             app.weekendConfig = {};
             if(type === 'sun') app.weekendConfig[0] = [1,2,3,4,5];
             else if(type === 'sat-sun') { app.weekendConfig[0] = [1,2,3,4,5]; app.weekendConfig[6] = [1,2,3,4,5]; }
-            else if(type === 'alt-sat') { app.weekendConfig[0] = [1,2,3,4,5]; app.weekendConfig[6] = [2,4]; }
+            else if(type === 'alt-sat-24') { app.weekendConfig[0] = [1,2,3,4,5]; app.weekendConfig[6] = [2,4]; }
+            else if(type === 'alt-sat-135') { app.weekendConfig[0] = [1,2,3,4,5]; app.weekendConfig[6] = [1,3,5]; }
             document.querySelectorAll('.pat-btn').forEach(b => b.classList.remove('active'));
             if(type !== 'clear') btn.classList.add('active');
             renderWizard();
@@ -286,7 +290,7 @@
             i18n[app.lang].days.forEach((day, idx) => {
                 const config = app.weekendConfig[idx] || [];
                 const isActive = config.length > 0;
-                container.innerHTML += `<div class="wkd-row"><span class="font-bold text-base ${isActive?'text-red-500':'text-[#1c1c1c]'}">${day}</span><div class="flex gap-2">${[1,2,3,4,5].map(n => `<button onclick="toggleWeekNum(${idx}, ${n})" class="num-btn ${config.includes(n)?'active':''}">${n}</button>`).join('')}</div></div>`;
+                container.innerHTML += `<div class="wkd-row"><span class="font-bold text-base ${isActive?'text-red-500':'text-[#1c1c1c]'}">${day}</span><div class="flex gap-1.5">${[1,2,3,4,5].map(n => `<button onclick="toggleWeekNum(${idx}, ${n})" class="num-btn ${config.includes(n)?'active':''}">${n}</button>`).join('')}</div></div>`;
             });
         }
 
@@ -300,11 +304,22 @@
 
         function openPreview() {
             const content = document.getElementById('sheetContent');
-            content.innerHTML = `<h3 class="text-xl font-extrabold mb-6 text-center">March Preview</h3><div id="previewGrid" class="grid grid-cols-7 gap-y-3 text-center mb-8"></div><button onclick="closeSheet()" class="z-btn-main">Got it</button>`;
+            content.innerHTML = `
+                <h3 class="text-2xl font-extrabold mb-2 text-center">March 2026</h3>
+                <p class="text-center text-gray-400 text-xs mb-8 uppercase font-bold tracking-widest">Preview Mode</p>
+                <div class="grid grid-cols-7 text-center font-bold text-gray-300 text-[10px] mb-4"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
+                <div id="previewGrid" class="grid grid-cols-7 gap-y-4 text-center mb-10 place-items-center"></div>
+                <button onclick="closeSheet()" class="z-btn-main">Got it, proceed</button>
+            `;
             const grid = document.getElementById('previewGrid');
-            const first = new Date(2026, 2, 1).getDay(); for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
-            for(let d=1; d<=31; d++) { const status = getDayStatus(d); grid.innerHTML += `<div class="w-8 h-8 flex items-center justify-center text-[10px] font-bold rounded-full day-${status.type}">${d}</div>`; }
-            document.getElementById('sheetOverlay').classList.remove('hidden'); document.getElementById('actionSheet').classList.add('open');
+            const first = new Date(2026, 2, 1).getDay(); 
+            for(let p=0; p<first; p++) grid.innerHTML += `<div></div>`;
+            for(let d=1; d<=31; d++) { 
+                const status = getDayStatus(d); 
+                grid.innerHTML += `<div class="w-9 h-9 flex items-center justify-center text-[11px] font-bold rounded-full day-${status.type}">${d}</div>`; 
+            }
+            document.getElementById('sheetOverlay').classList.remove('hidden'); 
+            document.getElementById('actionSheet').classList.add('open');
         }
 
         function renderCalendar() {
@@ -333,8 +348,8 @@
 
         function onDayClick(d) {
             app.activeDay = d; const status = getDayStatus(d);
-            if(!app.rangeMode) { openSheet(status.type === 'none' ? 'add' : 'view', status); }
-            else { if(app.rangeStart === null) app.rangeStart = d; else { openSheet('addRange', { s: Math.min(app.rangeStart, d), e: Math.max(app.rangeStart, d) }); } renderCalendar(); }
+            if(!app.rangeMode) openSheet(status.type === 'none' ? 'add' : 'view', status);
+            else { if(app.rangeStart === null) app.rangeStart = d; else openSheet('addRange', { s: Math.min(app.rangeStart, d), e: Math.max(app.rangeStart, d) }); renderCalendar(); }
         }
 
         function openSheet(mode, data) {
@@ -357,23 +372,15 @@
             document.getElementById('view-cal').classList.toggle('hidden', v !== 'cal'); 
             document.getElementById('view-header').innerText = i18n[app.lang][v==='scan'?'navAttendance':'navCalendar'];
             
-            // Update Active States for Desktop & Mobile
             const navIds = ['nav-scan', 'nav-cal', 'mob-nav-scan', 'mob-nav-cal'];
             navIds.forEach(id => {
                 const el = document.getElementById(id);
                 const isScan = id.includes('scan');
                 const shouldBeActive = (v === 'scan' && isScan) || (v === 'cal' && !isScan);
-                
-                if(shouldBeActive) {
-                    el.classList.add('bg-[#1C1C1C]', 'text-white');
-                    el.classList.remove('text-gray-400', 'text-gray-500', 'hover:bg-gray-50');
-                } else {
-                    el.classList.remove('bg-[#1C1C1C]', 'text-white');
-                    el.classList.add('text-gray-400', 'text-gray-500', 'hover:bg-gray-50');
-                }
+                if(shouldBeActive) { el.classList.add('bg-[#1C1C1C]', 'text-white'); el.classList.remove('text-gray-400', 'text-gray-500', 'hover:bg-gray-50'); }
+                else { el.classList.remove('bg-[#1C1C1C]', 'text-white'); el.classList.add('text-gray-400', 'text-gray-500', 'hover:bg-gray-50'); }
             });
-
-            if(window.innerWidth < 1024) toggleMobileMenu();
+            if(window.innerWidth < 1024 && document.getElementById('mobileMenu').classList.contains('open')) toggleMobileMenu();
         }
 
         function renderNatChecklist() {
